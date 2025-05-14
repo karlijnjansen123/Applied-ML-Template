@@ -5,9 +5,11 @@ from IPython.display import display
 
 # check cwd
 print("Current working directory: ", os.getcwd())
+filepath = os.path.join(os.getcwd(), "HBSC2018.csv")
+print(filepath)
 
-# data
-data = pd.read_csv("HBSC2018OAed1.1.csv", sep=";")
+data = pd.read_csv(filepath, sep=";")
+# this will throw a warning: columns 11, 14, 17, 18 have mixed types.
 
 # a little check to see if the dataset is what we expect, so display the 3 first data rows
 display(data.head(3))
@@ -31,7 +33,11 @@ data[cols_of_interest] = data[cols_of_interest].apply(pd.to_numeric, errors='coe
 # Not Yet Implemented
 
 # Replace 99, 999, -99, -999 and empty with NaN
-# Not Yet Implemented
+data = data.replace(99, np.nan)
+data = data.replace(-99, np.nan)
+data = data.replace(999, np.nan)
+data = data.replace(-999, np.nan)
+data = data.replace(" ", np.nan)
 
 # Handle NaNs
 # Not Yet Implemented
