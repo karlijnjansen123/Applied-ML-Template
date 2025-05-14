@@ -36,10 +36,9 @@ data = data.replace(" ", np.nan)
 emc_cols = ['emcsocmed1', 'emcsocmed2', 'emcsocmed3', 'emcsocmed4', 'emcsocmed5', 'emcsocmed6', 'emcsocmed7', 'emcsocmed8', 'emcsocmed9']
 data['emcsocmed_median'] = data[emc_cols].median(axis=1)
 
-print(data.loc[:50, ["emcsocmed_median"]])
+#print(data.loc[:50, ["emcsocmed_median"]]) to show first 50 rows for check-up
 
-# Handle categorical values with one-hot-encoder
-# Not Yet Implemented
+# Replace NaN's with the median of each column
+data[cols_of_interest] = data[cols_of_interest].fillna(data[cols_of_interest].median())
+data["emcsocmed_median"] = data["emcsocmed_median"].fillna(data["emcsocmed_median"].median())
 
-# Normalization
-# Not Yet Implemented
