@@ -17,7 +17,7 @@ def preprocess_hbsc_data(filepath, cols_of_interest, emc_cols):
     data.columns = data.columns.str.strip()
 
     # Replace placeholder values with NaN
-    data[cols_of_interest] = data[cols_of_interest].replace([99, -99, 999, -999, " "], np.nan)
+    data[cols_of_interest] = data[cols_of_interest].replace([99, -99, 999, -999, '99', '-99', '999', '-999', 99.0, -99.0, 999.0, -999.0], np.nan)
     data[cols_of_interest] = data[cols_of_interest].replace(r'^\s*$', np.nan, regex=True)
 
     data[cols_of_interest] = data[cols_of_interest].apply(pd.to_numeric, errors='coerce')

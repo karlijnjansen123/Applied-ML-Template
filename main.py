@@ -36,7 +36,5 @@ print(KNN_solver(X, Y3))
 print(KNN_solver(X, Y4))
 
 
-
-
 #if __name__ == '__main__':
  #   hello_world()
