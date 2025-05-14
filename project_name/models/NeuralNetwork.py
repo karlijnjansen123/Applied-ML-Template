@@ -4,7 +4,7 @@ from tensorflow import keras
 def build_neural_network(X,Y1,Y2,Y3,Y4):
     #Convert from pandas to tensor
     X_tensor = tf.convert_to_tensor(X.values,dtype=tf.float32)
-    Y1_tensor =tf.convert_to_tensor(Y1.values-1,dtype=tf.int32)
+    Y1_tensor =tf.convert_to_tensor(Y1.values,dtype=tf.int32)
     Y2_tensor = tf.convert_to_tensor(Y2.values-1, dtype=tf.int32)
     Y3_tensor = tf.convert_to_tensor(Y3.values-1, dtype=tf.int32)
     Y4_tensor = tf.convert_to_tensor(Y4.values-1, dtype=tf.int32)
