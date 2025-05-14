@@ -4,6 +4,7 @@ import numpy as np
 from IPython.display import display
 from project_name.data import preprocessing
 from project_name.models.KNN import *
+from project_name.models.NeuralNetwork import *
 
 # check cwd
 print("Current working directory: ", os.getcwd())
@@ -35,8 +36,8 @@ print(KNN_solver(X, Y2))
 print(KNN_solver(X, Y3))
 print(KNN_solver(X, Y4))
 
-
-
+#Build the model
+neural_network_build = build_neural_network(X,Y1,Y2,Y3,Y4)
 
 #if __name__ == '__main__':
  #   hello_world()
