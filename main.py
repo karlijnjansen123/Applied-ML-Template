@@ -21,7 +21,7 @@ clean_data = preprocessing.preprocess_hbsc_data(filepath, cols_of_interest, emc_
 print(clean_data.head())
 
 X = clean_data[["sex", "health", "timeexe", "sweets_2", "beenbullied"]]
-Y1 = clean_data["emcsocmed_median"]
+Y1 = clean_data["emcsocmed_sum"]
 Y2 = clean_data["thinkbody"]
 Y3 = clean_data["feellow"]
 Y4 = clean_data["sleepdificulty"]
