@@ -5,6 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
 import keras
+from focal_loss import  SparseCategoricalFocalLoss
 
 def build_neural_network(X, Y1, Y2, Y3,input_size):
     #print statements to check inbalanced classes
@@ -38,9 +39,8 @@ def build_neural_network(X, Y1, Y2, Y3,input_size):
     #Hidden Layers
     hidden1 = tf.keras.layers.Dense(128, activation= 'relu')(inp)
     hidden2 = tf.keras.layers.Dense(64, activation='relu')(hidden1)
-    hidden3 = tf.keras.layers.Dense(32, activation='relu')(hidden2)
-    hidden4 = tf.keras.layers.Dense(16, activation='relu')(hidden3)
-
+    hidden3 = tf.keras.layers.Dense(64, activation='relu')(hidden2)
+    hidden4 = tf.keras.layers.Dense(64, activation='relu')(hidden3)
     #Output Layers
     out1 = tf.keras.layers.Dense(5, activation='softmax',name='think_body')(hidden4)
     out2 = tf.keras.layers.Dense(5, activation='softmax', name='feeling_low')(hidden4)
@@ -51,9 +51,9 @@ def build_neural_network(X, Y1, Y2, Y3,input_size):
     model.compile(
         optimizer='adam',
         loss={
-            'think_body': tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
-            'feeling_low': tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
-            'sleep_difficulty': tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+            'think_body': SparseCategoricalFocalLoss( gamma=2),
+            'feeling_low': SparseCategoricalFocalLoss(gamma =2),
+            'sleep_difficulty':SparseCategoricalFocalLoss(gamma =2)
         },
         metrics={
             'think_body': tf.keras.metrics.SparseCategoricalAccuracy(),
