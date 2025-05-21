@@ -32,6 +32,8 @@ print(size_input)
 
 
 print("X shape:", X.shape)
+print("Y1 shape:", Y1.shape)
+print("Y1 NaNs:", Y1.isna().sum())
 
 # run KNN model
 print(KNN_solver(X, Y1))
