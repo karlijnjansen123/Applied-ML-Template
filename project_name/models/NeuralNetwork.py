@@ -6,7 +6,7 @@ from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
 import keras
 
-def build_neural_network(X, Y1, Y2, Y3):
+def build_neural_network(X, Y1, Y2, Y3,input_size):
     #print statements to check inbalanced classes
     print(Y1.value_counts(normalize=True).round(3))
     print(Y2.value_counts(normalize=True).round(3))
@@ -33,7 +33,7 @@ def build_neural_network(X, Y1, Y2, Y3):
     Y3_tensor = tf.convert_to_tensor(Y3_train.values-1, dtype=tf.int32)
 
     #Input Layer
-    inp = tf.keras.Input(shape=(5,))
+    inp = tf.keras.Input(shape=(input_size,))
 
     #Hidden Layers
     hidden1 = tf.keras.layers.Dense(128, activation= 'relu')(inp)
@@ -68,5 +68,5 @@ def build_neural_network(X, Y1, Y2, Y3):
         }, epochs=10, batch_size=32, validation_split=0.2
     )
     #Evaluating the model on the test data
-    #results = model.evaluate(X_test,Y2_test,Y3_test,Y4_test,batch_size=32 )
+    #results = model.evaluate(X_test,Y1_test,Y2_test,Y3_test)
     return model

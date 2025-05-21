@@ -4,7 +4,7 @@ import numpy as np
 from IPython.display import display
 from project_name.data import preprocessing
 from project_name.models.KNN import *
-from project_name.models.NeuralNetwork import  *
+from project_name.models.NeuralNetwork import build_neural_network
 
 # check cwd
 print("Current working directory: ", os.getcwd())
@@ -27,6 +27,10 @@ Y1 = clean_data["thinkbody"]
 Y2 = clean_data["feellow"]
 Y3 = clean_data["sleepdificulty"]
 
+size_input = X.shape[1]
+print(size_input)
+
+
 print("X shape:", X.shape)
 
 # run KNN model
@@ -35,4 +39,4 @@ print(KNN_solver(X, Y2))
 print(KNN_solver(X, Y3))
 
 #run the neural network
-neural_network = build_neural_network(X,Y1,Y2,Y3)
+neural_network = build_neural_network(X,Y1,Y2,Y3,size_input)
