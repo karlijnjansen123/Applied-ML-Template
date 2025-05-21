@@ -20,7 +20,10 @@ clean_data = preprocessing.preprocess_hbsc_data(filepath, cols_of_interest, emc_
 
 print(clean_data.head())
 
-X = clean_data[["sex", "health", "timeexe", "sweets_2", "beenbullied"]]
+#column_names = [i for i in clean_data.columns]
+#print(column_names)
+column_names = ["sex", "health", "timeexe", "sweets_2", "sleepdificulty"]
+X = clean_data[["sex", "health", "timeexe", "sweets_2", "sleepdificulty"]]
 Y1 = clean_data["emcsocmed_median"]
 Y2 = clean_data["thinkbody"]
 Y3 = clean_data["feellow"]
@@ -29,12 +32,22 @@ print("X shape:", X.shape)
 print("Y1 shape:", Y1.shape)
 print("Y1 NaNs:", Y1.isna().sum())
 
-# KNN Accuracy
-print(KNN_solver(X, Y1))
-print(KNN_solver(X, Y2))
-print(KNN_solver(X, Y3))
-print(KNN_solver(X, Y4))
 
+acc, X_tr, X_te, predict_proba = KNN_solver(X, Y1)
+print(acc)
+shap_graphs(X_tr, X_te, predict_proba, column_names=column_names)
+
+acc, X_tr, X_te, predict_proba = KNN_solver(X, Y2)
+print(acc)
+shap_graphs(X_tr, X_te, predict_proba, column_names=column_names)
+
+acc, X_tr, X_te, predict_proba = KNN_solver(X, Y3)
+print(acc)
+shap_graphs(X_tr, X_te, predict_proba, column_names=column_names)
+
+acc, X_tr, X_te, predict_proba = KNN_solver(X, Y4)
+print(acc)
+shap_graphs(X_tr, X_te, predict_proba, column_names=column_names)
 
 
 
