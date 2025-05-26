@@ -1,22 +1,32 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from project_name.models.NeuralNetwork import build_neural_network
+import numpy as  np
+import keras
+from focal_loss import SparseCategoricalFocalLoss
 
 #Create an instance of the FastAPI, this main object will handle requests
 app = FastAPI()
-
-#model = build_neural_network() --> load model using pickle
+#load the model from the saved model.keras file,
+loaded_model = keras.models.load_model("project_name/Deployment/neural_network_model.keras", custom_objects= {"SparseCategoricalFocalLoss":SparseCategoricalFocalLoss}
+)
 
 class ModelInput(BaseModel):
     """
-    input converted into modelinput via the Basemodel, here we define the structure of the expected input
-    /Xfeatures
+    Basemodel to specify our input features
     """
-
-
-#endpoint of the root, everytime the user send a POST request to / which has to be the path?, the function is run
-@app.post('/')
-#asynchronous function
-async def prediction({features: ModelInput()}):
-    #json format?
-    return {'reponse': 'TBT'}
+    irritable: int
+    nervous: int
+    bodyweight: int
+    lifesat: int
+    headache: int
+    stomachache: int
+    health: int
+    bodyheight: int
+    backache: int
+    studyaccept: int
+    beenbullied: int
+    schoolpressure: int
+    talkfather: int
+    fastcomputers: int
+    dizzy: int
+    overweight: int

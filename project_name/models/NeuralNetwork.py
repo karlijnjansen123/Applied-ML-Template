@@ -7,6 +7,7 @@ import numpy as np
 import keras
 from focal_loss import  SparseCategoricalFocalLoss
 
+
 def build_neural_network(X, Y1, Y2, Y3,input_size):
     #Print statements to check imbalanced classes
     print(Y1.value_counts(normalize=True).round(3))
@@ -27,7 +28,7 @@ def build_neural_network(X, Y1, Y2, Y3,input_size):
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
 
-    #Input Layer
+    #Input Layer, when the model is loaded, it expects a numpy array of the same size
     inp = tf.keras.Input(shape=(input_size,))
 
     #Hidden Layers
@@ -61,8 +62,11 @@ def build_neural_network(X, Y1, Y2, Y3,input_size):
         'sleep_difficulty': Y3_train - 1
     }, epochs=10, batch_size=32, validation_split=0.2)
 
+    #Saving the model in the Deployment directory
+    model.save('project_name/Deployment/neural_network_model.keras')
+
     #Evaluating the model on the test data
     #results = model.evaluate(X_test,Y1_test,Y2_test,Y3_test)
     #conert to tensor
     # model = model(tf.convert_to_tensor(X_train[:1].astype(np.float32)))
-    return model, X_train ,X_test, scaler
+    return model, X_train ,X_test,scaler
