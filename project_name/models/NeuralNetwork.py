@@ -63,5 +63,6 @@ def build_neural_network(X, Y1, Y2, Y3,input_size):
 
     #Evaluating the model on the test data
     #results = model.evaluate(X_test,Y1_test,Y2_test,Y3_test)
-
-    return model
+    #conert to tensor
+    # model = model(tf.convert_to_tensor(X_train[:1].astype(np.float32)))
+    return model, X_train ,X_test, scaler
