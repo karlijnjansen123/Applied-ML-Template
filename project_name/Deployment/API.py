@@ -2,7 +2,10 @@
 Start the API from the rootpath:
 uvicorn project_name.Deployment.API:app --reload
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from pydantic import BaseModel
 import keras
 from focal_loss import SparseCategoricalFocalLoss
@@ -35,11 +38,6 @@ class ModelInput(BaseModel):
     dizzy: int
     overweight: int
 
-#Added so it works
-@app.get("/")
-async def root():
-    return {"message": "API is working!!!"}
-
 @app.post("/predict")
 #Function for predictions and creating output
 async def predicition(input_data:ModelInput):
@@ -51,3 +49,11 @@ async def predicition(input_data:ModelInput):
         "Risk at feeling low" : prediction_feelinglow,
         "Risk at sleep difficulties": prediction_sleepdifficulties
     }
+
+#Handle HTTP error 404
+@app.exception_handler(StarletteHTTPException)
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    if exc.status_code == 404 and request.url.path in ["/", "/favicon.ico"]:
+        return JSONResponse(status_code=204, content=None)
+    # HTTP error because of a mistyped URL
+    return JSONResponse(status_code=exc.status_code, content={"detail": "This specific page was not found"})
