@@ -6,6 +6,7 @@ from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
 import keras
 from focal_loss import  SparseCategoricalFocalLoss
+import joblib
 
 
 def build_neural_network(X, Y1, Y2, Y3,input_size):
@@ -27,6 +28,9 @@ def build_neural_network(X, Y1, Y2, Y3,input_size):
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
+
+    #Save the scaler in the Deployment folder to use for API
+    joblib.dump(scaler,"./project_name/Deployment/scaler.pkl")
 
     #Input Layer, when the model is loaded, it expects a numpy array of the same size
     inp = tf.keras.Input(shape=(input_size,))
