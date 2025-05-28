@@ -1,14 +1,9 @@
 """
 Start the API from the rootpath:
 uvicorn project_name.Deployment.API:app --reload
-- error
-- scaling
-- inputscheme
-- should we have scaled our input seperatly
 """
 
 from fastapi import FastAPI
-from main import scaler
 from pydantic import BaseModel
 import numpy as  np
 import keras
@@ -56,8 +51,9 @@ async def make_predicition(input_data:ModelInput):
                 input_data.health, input_data.bodyheight,input_data.backache,input_data.studyaccept,input_data.beenbullied,
                 input_data.schoolpressure,input_data.talkfather,input_data.fastcomputers,input_data.dizzy,input_data.overweight]])
 
-
+    #this in  different function
     #scaling the input
+    scaler = StandardScaler()
     scaled_input = scaler.transform(user_input)
     #Predict, returns a  list of numpy arrays, one for each output
     prediction  = loaded_model.predict(user_input)
@@ -110,10 +106,6 @@ async def make_predicition(input_data:ModelInput):
         "Risk at feeling low" : str(feelinglow_dict[str(feelinglow_class)]),
         "Risk at sleep difficulties" : str(sleepdifficulties_dict[str(sleepdifficulties_class)])
     }
-
-    print(f"You're at risk to think the following about your body: {thinkbody_dict[str(thinkbody_class)]}")
-    print(f"You're at risk to feel low {feelinglow_dict[str(feelinglow_class)]}")
-    print(f"You're at risk to have difficulties with sleep {sleepdifficulties_dict[str(sleepdifficulties_class)]}")
 
     print(output_classes)
     return output_formatted
