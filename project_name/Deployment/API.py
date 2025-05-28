@@ -1,14 +1,19 @@
 """
 Start the API from the rootpath:
 uvicorn project_name.Deployment.API:app --reload
+- error
+- scaling
+- inputscheme
+- should we have scaled our input seperatly
 """
 
 from fastapi import FastAPI
-
+from main import scaler
 from pydantic import BaseModel
 import numpy as  np
 import keras
 from focal_loss import SparseCategoricalFocalLoss
+from sklearn.preprocessing import StandardScaler
 
 
 #Create an instance of the FastAPI, this main object will handle requests
@@ -19,7 +24,7 @@ loaded_model = keras.models.load_model("project_name/Deployment/neural_network_m
 
 class ModelInput(BaseModel):
     """
-    Basemodel to specify our input features
+    Basemodel to specify our  sixteen input features
     """
     irritable: int
     nervous: int
@@ -50,6 +55,10 @@ async def make_predicition(input_data:ModelInput):
                 input_data.bodyweight,input_data.lifesat,input_data.headache,input_data.stomachache,
                 input_data.health, input_data.bodyheight,input_data.backache,input_data.studyaccept,input_data.beenbullied,
                 input_data.schoolpressure,input_data.talkfather,input_data.fastcomputers,input_data.dizzy,input_data.overweight]])
+
+
+    #scaling the input
+    scaled_input = scaler.transform(user_input)
     #Predict, returns a  list of numpy arrays, one for each output
     prediction  = loaded_model.predict(user_input)
 
