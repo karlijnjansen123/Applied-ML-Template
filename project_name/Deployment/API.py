@@ -4,7 +4,7 @@ uvicorn project_name.Deployment.API:app --reload
 """
 
 from fastapi import FastAPI
-from numpy.ma.core import argmax
+
 from pydantic import BaseModel
 import numpy as  np
 import keras
@@ -40,7 +40,8 @@ class ModelInput(BaseModel):
 #Added to get it to work?
 @app.get("/")
 async def root():
-    return {"message": "✅ The API is running. Use /predict to get predictions."}
+    return {"message": "API is working!!!"}
+
 #Define a route (what comes after the url
 @app.post("/predict")
 #The parameter for this asynchronous function is an instance of the ModelInput
@@ -54,12 +55,56 @@ async def make_predicition(input_data:ModelInput):
 
     #Formatting the output to JSON format (from numpy to a python list), and stored in a dictionary
     #Also encoding the class, np.argmax returns the index of the highest value
+    #Ouput with just the predictions can be deleted?
+
     output = {
         "ThinkBody": prediction[0][0].tolist(),
-        "ThinkBodyClass": int(np.argmax(prediction[0][0])),
         "FeelingLow": prediction[1][0].tolist(),
-        "FeelingLowClass":int(np.argmax(prediction[1][0])),
         "Sleep Difficulties" : prediction[2][0].tolist(),
-        "SleepDifficultiesClass" :int(np.argmax(prediction[2][0]))}
-    print(output)
-    return output
+    }
+
+    output_classes ={
+        "ThinkBodyClass": int(np.argmax(prediction[0][0]))+1,
+        "FeelingLowClass": int(np.argmax(prediction[1][0]))+1,
+        "SleepDifficultiesClass": int(np.argmax(prediction[2][0])+1)
+    }
+
+    #Classes for the output
+    thinkbody_class = output_classes["ThinkBodyClass"]
+    feelinglow_class = output_classes["FeelingLowClass"]
+    sleepdifficulties_class = output_classes["SleepDifficultiesClass"]
+
+    #Defining the classes dictionaries:
+    thinkbody_dict = {
+        '1':'Much too thin',
+        '2': 'A bit too thin',
+        '3': 'About right',
+        '4': 'A bit too fat',
+        '5': 'Much too fat',
+    }
+    feelinglow_dict = {
+        '1':'About every day',
+        '2': 'About once a week',
+        '3': 'About every week',
+        '4': 'About every month',
+        '5': 'Rarely or never'
+    }
+    sleepdifficulties_dict = {
+        '1': 'About every day',
+        '2': 'About once a week',
+        '3': 'About every week',
+        '4': 'About every month',
+        '5': 'Rarely or never'
+    }
+    output_formatted = {
+        "Risk for body image" : str(thinkbody_dict[str(thinkbody_class)]),
+        "Risk at feeling low" : str(feelinglow_dict[str(feelinglow_class)]),
+        "Risk at sleep difficulties" : str(sleepdifficulties_dict[str(sleepdifficulties_class)])
+    }
+
+    print(f"You're at risk to think the following about your body: {thinkbody_dict[str(thinkbody_class)]}")
+    print(f"You're at risk to feel low {feelinglow_dict[str(feelinglow_class)]}")
+    print(f"You're at risk to have difficulties with sleep {sleepdifficulties_dict[str(sleepdifficulties_class)]}")
+
+    print(output_classes)
+    return output_formatted
