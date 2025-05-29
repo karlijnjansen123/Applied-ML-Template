@@ -25,7 +25,7 @@ We use the HBSC (“Health Behavior in School-aged Children”) dataset from 201
 ### Requirements 
 Before running the API, navigate the path to the root directory using the **'Folder Structure'** defined below, and install the requirements via the terminal:
 
-`pip install -r requirements.txt`
+`pip install  -r project_name/requirements`
 
 ### Run the API
 To start the API, navigate to the root directory of the project and run in the terminal:
@@ -105,14 +105,52 @@ Applied-ML-Template/<br>
     └── test_main.pyv
 
 
-.....
 
 ## Features
 
 ......
 
 ## Models
+###Preprocessing 
+The preprocessing is applied to both the baseline and full model, and includes the following steps.
+
+- Missing and invalid values are handles by imputing the median.
+- There are nine social-media related questions which are aggregated into one variable, the *Social Media Disorder Scale* 
+- All features are set to numeric types
+Normalization and splitting of the data is done within the models.
 ### Baseline
 We use a k-Nearest Neighbors (KNN) model as the baseline, and a multi-class neural network as the primary model for classification.
 ### Full model 
-......
+
+## Model Arcitectue 
+The model is a neural network implemented with Keras. It consists of an input layer expecting sixteen input features, followed by 
+four hidden layers with 128,64,32,16 units, respectively, each using ReLu activation.
+The hidden layers are shared across tasks to enable multi-task learning. 
+The network branches into three separate output layers, each using softmax activation to generate predictions. 
+
+
+## Input and  output
+Sixteen input features were selected based on feature importance scores. 
+The model generates predictions across the three separated domains. 
+
+## Training
+The features and target data are split into a train and test set.
+The input data (*X_train* , *X_test*) is normalized using a *StandardScalar* to ensure consistent scaling across features. 
+The neural network  is trained using the *Adam optimizer*, with *SparseCategoricalAccuracy* as the evaluation metric.
+Accuracy is calculated separately for each output target to asses performance per task.
+
+SHOW THAT THE MODEL DOES MORE THAN RANDOM GUESSING 
+
+
+
+## Model Justification 
+The multi-task learning neural network outperformed the three separate KNN-models, demonstrating the effectiveness of the shared representations 
+across the three targets outputs.
+
+## Limitations 
+There are some limitations that could affect the generalizability and performance of the model:
+- The model relies on self-reported questionnaire responses which could introduce biases. 
+- The target classes are imbalanced, and apart from using Focal loss no other methods were used to mitigate this. 
+- Due to the imbalanced classes and possible bias due to sel-reported questionnaire awnsers, the models accuracy is limited.
+However as stated earlier, the primary significance and novelty of this tool lies in the insight it provides of how certain 
+lifestyle choices impact overall mental and physical health. 
