@@ -15,7 +15,7 @@ def preprocess_hbsc_data(filepath, selected_columns, emc_cols, y):
 
     # Load data
     print(f"Loading data from: {filepath}")
-    data = pd.read_csv(filepath, sep=";")
+    data = pd.read_csv(filepath, sep=";", low_memory=False)
 
     # Data shape check
     print(f"Original data shape: {data.shape}")
