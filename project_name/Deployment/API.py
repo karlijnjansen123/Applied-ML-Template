@@ -3,7 +3,7 @@ Start the API from the rootpath:
 uvicorn project_name.Deployment.API:app --reload
 """
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import Response, JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from pydantic import BaseModel
@@ -15,7 +15,6 @@ from .prediction_postprocessing import  make_predictions, post_processing
 app = FastAPI()
 loaded_model = keras.models.load_model("project_name/Deployment/neural_network_model.keras", custom_objects= {"SparseCategoricalFocalLoss":SparseCategoricalFocalLoss}
 )
-
 
 class ModelInput(BaseModel):
     """
@@ -50,10 +49,29 @@ async def predicition(input_data:ModelInput):
         "Risk at sleep difficulties": prediction_sleepdifficulties
     }
 
-#Handle HTTP error 404
+# Handle 404 error, client error
 @app.exception_handler(StarletteHTTPException)
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
-    if exc.status_code == 404 and request.url.path in ["/", "/favicon.ico"]:
-        return JSONResponse(status_code=204, content=None)
-    # HTTP error because of a mistyped URL
-    return JSONResponse(status_code=exc.status_code, content={"detail": "This specific page was not found"})
+    if exc.status_code == 404 and request.url.path in ["/favicon.ico"]:
+        # Silently ignore /favicon.ico
+        return Response(status_code=204)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": f"This specific page '{request.url.path}' was not found (HTTP {exc.status_code})"}
+    )
+
+# Handle 422, validation errors
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": "Input data is invalid", "errors": exc.errors()}
+    )
+
+# Handle 500, internal server error
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An unexpected internal error occurred, please try again later."}
+    )
