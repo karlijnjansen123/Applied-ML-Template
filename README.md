@@ -1,6 +1,6 @@
 
 # Applied Machine Learning Project  
-**By:** Aliesja, Francien, Ilse, and Karlijn
+*By:* Aliesja Verheij(s4534425), Francien Vogelaar(3337235), Ilse Ten Tije(s4789997), and Karlijn Janssen(s4553357)
 
 ## Project overview
 This is an AI-based API that predicts whether certain mental or physical health-related problems are present for 
@@ -149,7 +149,7 @@ The 15 most important features that inform the overall model are (in descending 
 | emcsocmed_8   |                                                                                                                  often used social media to escape from negative feelings?                                                                                                                   |                                                                                                                                                               1= No, 2= Yes |
 | emcsocmed_9   |                                                                                              had serious conflict with your parents, brother(s) or sister(s) because of your social media use?                                                                                               |                                                                                                                                                               1= No, 2= Yes |
 | nervous       |                                                                                                       In the last 6 months: how often have you had the following....?  Feeling nervous                                                                                                       |                                               1 = about every day, <br/> 2 = more once/day,<br> 3 = about every week<br/>   4 = about every month<br/>  5 = rarely or never |
-| irritable     |                                                                                                In the last 6 months: how often have you had the following....?  Feeling irritable         $12                                                                                                |                                               1 = about every day, <br/> 2 = more once/day,<br> 3 = about every week<br/>   4 = about every month<br/>  5 = rarely or never |
+| irritable     |                                                                                                 In the last 6 months: how often have you had the following....?  Feeling irritable                                                                                                           |                                               1 = about every day, <br/> 2 = more once/day,<br> 3 = about every week<br/>   4 = about every month<br/>  5 = rarely or never |
 | lifesat       | Here is a picture of a ladder. The top of the ladder “10” is the best possible life for you and the bottom “0” is the worst possible life for you. In general, where on the ladder do you feel you stand at the moment? Tick the box next to the number that best describes where you stand. |                                                                                                                           0(=worst possible life) - 10(=best possible life) |
 | breakfastwd   |                                                                        How often do you usually have breakfast (more than a glass of milk or fruit juice)? Please tick one box for weekdays and one box for weekend.                                                                         |                                                                      1 = never <br> 2 = one day <br> 3 = two days <br> 4 = three days <br> 5 = four days <br> 6 = five days |
 | health        |                                                                                                                             Would you say your health is......?                                                                                                                              |                                                                                                                       1 = excellent <br> 2 = good<br> 3 = fair<br> 4 = poor |
@@ -179,6 +179,7 @@ The preprocessing is applied to both the baseline and full model, and includes t
 - Missing and invalid values are handles by imputing the median.
 - There are nine social-media related questions which are aggregated into one variable, the *Social Media Disorder Scale* 
 - All features are set to numeric types
+
 Normalization and splitting of the data is done within the models.
 
 ### Baseline
