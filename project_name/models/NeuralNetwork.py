@@ -77,7 +77,7 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
         'think_body': Y1_train - 1,  # Make it a 0-based index
         'feeling_low': Y2_train - 1,
         'sleep_difficulty': Y3_train - 1
-    }, epochs=1, batch_size=32, validation_split=0.2)
+    }, epochs=10, batch_size=32, validation_split=0.2)
 
     # Extract the latest validation accuracies from history
     val_accuracy_thinkbody = history.history[
