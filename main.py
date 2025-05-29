@@ -1,12 +1,14 @@
 import pandas as pd
 import os
 import numpy as np
+from tabulate import tabulate
 from IPython.display import display
 from project_name.data import preprocessing
 from project_name.models.KNN import *
-from project_name.models.NeuralNetwork import *
+from project_name.models.NeuralNetwork import build_neural_network
 from project_name.features.featureimportance import *
-from project_name.features.feature_correlation import *
+from collections import Counter
+#from project_name.Deployment.accuracy import *
 
 # check cwd
 print("Current working directory: ", os.getcwd())
@@ -29,12 +31,8 @@ clean_data = preprocessing.preprocess_hbsc_data(filepath, all_columns_minus_socm
 print(clean_data.head())
 
 # input and output
-# our initial selection for X:
 #X = clean_data[["sex", "health", "timeexe", "sweets_2", "beenbullied", "emcsocmed_sum"]]
-# All features (79)
-X = clean_data[["emcsocmed_sum", "fasfamcar", "fasbedroom", "fascomputers", "fasbathroom", "fasdishwash", "fasholidays", "health", "lifesat", "headache", "stomachache", "backache", "irritable", "nervous", "dizzy", "physact60", "breakfastwd", "breakfastwe", "fruits_2", "vegetables_2", "sweets_2", "softdrinks_2", "fmeal", "toothbr", "timeexe", "smokltm", "smok30d_2", "alcltm", "alc30d_2", "drunkltm", "drunk30d", "cannabisltm_2", "cannabis30d_2", "bodyweight", "bodyheight", "likeschool", "schoolpressure", "studtogether", "studhelpful", "studaccept", "teacheraccept", "teachercare", "teachertrust", "bulliedothers", "beenbullied", "cbulliedothers", "cbeenbullied", "fight12m", "injured12m", "friendhelp", "friendcounton", "friendshare", "friendtalk", "hadsex", "agesex", "contraceptcondom", "contraceptpill", "motherhome1", "fatherhome1", "stepmohome1", "stepfahome1", "fosterhome1", "elsehome1_2", "employfa", "employmo", "employnotfa", "employnotmo", "talkfather", "talkmother", "talkstepmo", "famhelp", "famsup", "famtalk", "famdec", "MBMI", "IRFAS", "IRRELFAS_LMH", "IOTF4", "oweight_who"]]
-# The most important features
-#X = clean_data[]
+X = clean_data[[ "health","oweight_who", "famtalk", "backache", "schoolpressure", "breakfastwe", "studaccept", "lifesat", "headache", "stomachache",  "irritable", "nervous", "dizzy", "bodyweight", "bodyheight",  "beenbullied"]]
 Y1 = clean_data["thinkbody"]
 Y2 = clean_data["feellow"]
 Y3 = clean_data["sleepdificulty"]
@@ -43,12 +41,23 @@ Y1 = pd.to_numeric(Y1, errors='raise')
 Y2 = pd.to_numeric(Y2, errors='raise')
 Y3 = pd.to_numeric(Y3, errors='raise')
 
-# column names of initial election
-# column_names = ["sex", "subj. health", "vig. exercise", "eating sweets", "being bullied", "social media"]
-# all column names
+# Compute the random baseline per target
+def compute_majority_baseline(y, label: str = ""):
+    counter = Counter(y)
+    most_common_class, count = counter.most_common(1)[0]
+    baseline_accuracy = count / len(y)
+    print(f"Majority class for {label}: {most_common_class}")
+    print(f"Baseline accuracy for {label}: {baseline_accuracy:.3f}")
+    return most_common_class, baseline_accuracy
+
+# Baseline evaluation
+randomguessing_bodyimage = compute_majority_baseline(Y1, label="Body Image")
+randomguessing_feellinglow = compute_majority_baseline(Y2, label="Feeling Low")
+randomguessing_sleepdifficulty = compute_majority_baseline(Y3, label="Sleep Difficulty")
+
+#column_names = ["sex", "subj. health", "vig. exercise", "eating sweets", "being bullied", "social media"]
 column_names = ["emcsocmed_sum", "fasfamcar", "fasbedroom", "fascomputers", "fasbathroom", "fasdishwash", "fasholidays", "health", "lifesat", "headache", "stomachache", "backache", "irritable", "nervous", "dizzy", "physact60", "breakfastwd", "breakfastwe", "fruits_2", "vegetables_2", "sweets_2", "softdrinks_2", "fmeal", "toothbr", "timeexe", "smokltm", "smok30d_2", "alcltm", "alc30d_2", "drunkltm", "drunk30d", "cannabisltm_2", "cannabis30d_2", "bodyweight", "bodyheight", "likeschool", "schoolpressure", "studtogether", "studhelpful", "studaccept", "teacheraccept", "teachercare", "teachertrust", "bulliedothers", "beenbullied", "cbulliedothers", "cbeenbullied", "fight12m", "injured12m", "friendhelp", "friendcounton", "friendshare", "friendtalk", "hadsex", "agesex", "contraceptcondom", "contraceptpill", "motherhome1", "fatherhome1", "stepmohome1", "stepfahome1", "fosterhome1", "elsehome1_2", "employfa", "employmo", "employnotfa", "employnotmo", "talkfather", "talkmother", "talkstepmo", "famhelp", "famsup", "famtalk", "famdec", "MBMI", "IRFAS", "IRRELFAS_LMH", "IOTF4", "oweight_who"]
-# column names of most important features
-# column_names = []
+
 size_input = X.shape[1]
 print(size_input)
 
@@ -71,20 +80,33 @@ acc, X_tr, X_te, predict_proba = KNN_solver(X, Y3)
 print("Accuracy for Sleep Difficulty:", acc)
 #KNN_shap_graphs(X_tr, X_te, predict_proba, "Sleep Difficulty", column_names=column_names)
 
-
 #run the neural network
-X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test = test_train_split(X, Y1, Y2, Y3)
-#neural_network, scaler = build_neural_network(X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input)
-#X_train.sample(10000, random_state=42).to_csv("shap_background.csv", index=False)
-#print(type(neural_network))
+neural_network, X_train, X_test, scaler, val_acc1, val_acc2, val_acc3 = build_neural_network(X,Y1,Y2,Y3,size_input)
+print(type(neural_network))
+NN_shap_graphs(
+    neural_network,
+    X_train,
+    column_names
+ )
 
-averaged_NN_shap_graphs_per_output(build_neural_network, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names, n_runs=1)
-#averaged_NN_shap_graphs(build_neural_network, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names)
+comparison = {
+    "Target": ["Body Image", "Feeling Low", "Sleep Difficulty"],
+    "Majority Baseline Accuracy": [
+        round(randomguessing_bodyimage[1], 3),
+        round(randomguessing_feellinglow[1], 3),
+        round(randomguessing_sleepdifficulty[1], 3)
+    ],
+    "Validation Accuracy (Neural Network)": [
+        round(val_acc1, 3),
+        round(val_acc2, 3),
+        round(val_acc2, 3)
+    ],
+    "Above Baseline?": [
+        val_acc1 > randomguessing_bodyimage[1],
+        val_acc2 > randomguessing_feellinglow[1],
+        val_acc3 > randomguessing_sleepdifficulty[1]
+    ]
+}
 
-#NN_shap_graphs(
-#    neural_network,
-#    X_train,
-#    column_names
-#)
-
-#feature_correlation_plot(X_train)
+df_comparison = pd.DataFrame(comparison)
+print(tabulate(df_comparison, headers='keys', tablefmt='pretty'))
