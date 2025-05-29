@@ -2,6 +2,7 @@ import numpy as np
 import joblib
 
 
+
 def make_predictions(input_data, loaded_model):
     """
     Function that makes predictions
@@ -81,3 +82,14 @@ def post_processing(prediction):
     predicted_sleep = str(sleepdifficulties_dict[str(sleepdifficulties_class)])
 
     return predicted_thinkbody, predicted_feelinglow, predicted_sleep, index_class_thinkbody,index_class_feelinglow,index_class_sleep
+
+
+def postprocessing_shap(top_features):
+    topfeatures_body = top_features["Risk for body image"]
+    topfeatures_feelinglow = top_features["Risk at feeling low"]
+    topfeatures_sleep = top_features["Risk at sleep difficulties"]
+    features_body = ",".join([feature[0] for feature in topfeatures_body])
+    features_feelinlow = ",".join([feature[0] for feature in topfeatures_feelinglow])
+    features_sleep =",".join([feature[0] for feature in topfeatures_sleep])
+
+    return features_body,features_feelinlow,features_sleep

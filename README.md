@@ -46,18 +46,19 @@ There are two ways to send a request to the API:
 1. Use the URL defined above and put "/docs" behind the URL to view the automated documentation in the swagger UI.
 2. Send a curl request via the terminal
 
-Below there is an example or such a curl request and the corresponding response body of the API.
+Below there is an example or such a curl request and the corresponding response body of the API. Screenshots of the API
+call and API documentation can be found under the directory screenshots_API
 
 **Curl Request**
 
 curl -X 'POST' \
-  'http://127.0.0.1:8000/predict' \
+  'http://127.0.0.1:8000/predict_with_shap' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
   "bodyweight": 60,
   "bodyheight": 170,
-  "emcsocmed_sum": 3,
+  "emcsocmed_sum": 13,
   "nervous": 3,
   "irritable": 2,
   "lifesat": 2,
@@ -75,11 +76,15 @@ curl -X 'POST' \
 
 **Response body**
 
-`
 {
-  "Risk for body image": "About right",
-  "Risk at feeling low": "About every day",
-  "Risk at sleep difficulties": "About every day"
+  "predictions": {
+    "Prediction for body image": "A bit too thin",
+    "Prediction at feeling low": "Rarely or never",
+    "Prediction at sleep difficulties": "Rarely or never",
+    "Top features attributing to body image prediction": "bodyheight,irritable,emcsocmed_sum",
+    "Top features attributing to feelinglow prediction": "headache,sweets_2,emcsocmed_sum",
+    "Top features attributing to sleep prediction": "sweets_2,headache,fight12m"
+  }
 }
 
 ### Folder Structure 

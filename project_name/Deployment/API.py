@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from typing import List
 import keras
 from focal_loss import SparseCategoricalFocalLoss
-from .prediction_postprocessing import make_predictions, post_processing
+from .prediction_postprocessing import make_predictions, post_processing,postprocessing_shap
 import pandas as pd
 import tensorflow as tf
 import shap
@@ -134,14 +134,27 @@ async def predict_with_shap(input_data: ModelInput):
 
     top_features = get_top3_shap_features_single(explainer, X_input, column_names)
 
+
+    features_body, features_feelinlow, features_sleep = postprocessing_shap(top_features)
+
+
+
+
+
+
+
+
+
     return {
         "predictions": {
-            "Risk for body image": prediction_thinkbody,
-            "Risk at feeling low": prediction_feelinglow,
-            "Risk at sleep difficulties": prediction_sleepdifficulties
-        },
-        "top_feature_importances": top_features
-    }
+            "Prediction for body image": prediction_thinkbody,
+            "Prediction at feeling low": prediction_feelinglow,
+            "Prediction at sleep difficulties": prediction_sleepdifficulties,
+            "Top features attributing to body image prediction" : features_body,
+            "Top features attributing to feelinglow prediction": features_feelinlow,
+            "Top features attributing to sleep prediction": features_sleep
+
+        }}
 
 @app.post("/predict")
 async def prediction(input_data: ModelInput):
