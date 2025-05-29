@@ -42,7 +42,7 @@ This will start the FastAPI server at:
 
 ### Send a request
 There are two ways to send a request to the API:
-1. Use the link defined above and put "/docs" behind the URL to view the automated documentation in the swagger UI.
+1. Use the URL defined above and put "/docs" behind the URL to view the automated documentation in the swagger UI.
 2. Send a curl request via the terminal
 
 Below there is an example or such a curl request and the corresponding response body of the API.
@@ -83,7 +83,7 @@ Below there is an example or such a curl request and the corresponding response 
 
 ### Folder Structure 
 
-The path defined below depicts all the folders, but not all the files are shown as that would make the tree unclear.
+The path defined below depicts all the folders, but not all the files (which would be too crowded).
 
 Applied-ML-Template/<br>
 ├── Pipfile<br> 
@@ -112,6 +112,8 @@ Applied-ML-Template/<br>
 ## Features
 
 ......
+
+## Quantification
 
 ## Models
 
@@ -150,25 +152,29 @@ The hidden layers are shared across tasks to enable multi-task learning.
 The network branches into three separate output layers, each using softmax activation to generate predictions.
 
 #### Input and output
-Sixteen input features were selected based on feature importance scores. 
-The model generates predictions across the three separated domains. 
+Sixteen input features were selected based on feature importance SHAP-values. 
+The model generates predictions across the three separate domains. 
 
 #### Training and evaluation
 The features and target data are split into a train and test set.
 The input data (*X_train* , *X_test*) is normalized using a *StandardScalar* to ensure consistent scaling across features. 
-The neural network  is trained using the *Adam optimizer*, with *SparseCategoricalAccuracy* as the evaluation metric.
-Accuracy is calculated separately for each output target to asses performance per task.
+The neural network  is trained using the *Adam optimizer*, and the *SparseCategoricalFocalLoss* as loss function. 
+Focal loss is used because it allows distinct class weights to each output, making it well suited for multi-task learning 
+situation with unbalanced classes. These weights are however, not yet implemented. 
+*SparseCategoricalAccuracy* is used as an evaluation metric, the accuracy is calculated separately for each output to 
+asses performance per task
 
-SHOW THAT THE MODEL DOES MORE THAN RANDOM GUESSING
+
 
 #### Model Justification 
 The multi-task learning neural network outperformed the three separate KNN-models, demonstrating the effectiveness 
 of the shared representations across the three targets outputs.
+SHOW THAT THE MODEL DOES MORE THAN RANDOM GUESSING
 
 #### Limitations 
 There are some limitations that could affect the generalizability and performance of the model:
 - The model relies on self-reported questionnaire responses which could introduce biases. 
 - The target classes are imbalanced, and apart from using Focal loss no other methods were used to mitigate this. 
 - Due to the imbalanced classes and possible bias due to sel-reported questionnaire answers, the models accuracy is limited.
-However as stated earlier, the primary significance and novelty of this tool lies in the insight it provides of how certain 
-lifestyle choices impact overall mental and physical health.
+However as stated earlier, the primary significance and novelty of this tool lies in the personalized insight it provides into how certain 
+lifestyle choices may impact overall mental and physical health.
