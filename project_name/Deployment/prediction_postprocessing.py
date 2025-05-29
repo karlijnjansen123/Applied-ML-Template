@@ -37,16 +37,17 @@ def post_processing(prediction):
 
     # Softmax values for each output
     output_classes = {
-        "ThinkBodyClass": int(np.argmax(prediction[0][0]))+1,
-        "FeelingLowClass": int(np.argmax(prediction[1][0]))+1,
-        "SleepDifficultiesClass": int(np.argmax(prediction[2][0])+1)
+    "ThinkBodyClass": int(np.argmax(prediction[0][0])),
+    "FeelingLowClass": int(np.argmax(prediction[1][0])),
+    "SleepDifficultiesClass": int(np.argmax(prediction[2][0]))
     }
 
-    # Save them as variables
-    thinkbody_class = output_classes["ThinkBodyClass"]
-    feelinglow_class = output_classes["FeelingLowClass"]
-    sleepdifficulties_class = output_classes["SleepDifficultiesClass"]
+    # Save the predictions as variables and shift to 1-based index
+    thinkbody_class = output_classes["ThinkBodyClass"] + 1
+    feelinglow_class = output_classes["FeelingLowClass"] + 1
+    sleepdifficulties_class = output_classes["SleepDifficultiesClass"] + 1
 
+    
     # Defining the values corresponding to the predicted classes
     thinkbody_dict = {
         '1': 'Much too thin',
@@ -71,8 +72,12 @@ def post_processing(prediction):
     }
 
     # Save the values as variables
+    index_class_thinkbody = output_classes["ThinkBodyClass"]
+    index_class_feelinglow = output_classes["FeelingLowClass"]  
+    index_class_sleep = output_classes["SleepDifficultiesClass"]  
+
     predicted_thinkbody = str(thinkbody_dict[str(thinkbody_class)])
     predicted_feelinglow = str(feelinglow_dict[str(feelinglow_class)])
     predicted_sleep = str(sleepdifficulties_dict[str(sleepdifficulties_class)])
 
-    return predicted_thinkbody, predicted_feelinglow, predicted_sleep
+    return predicted_thinkbody, predicted_feelinglow, predicted_sleep, index_class_thinkbody,index_class_feelinglow,index_class_sleep

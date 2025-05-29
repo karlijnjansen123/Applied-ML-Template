@@ -82,7 +82,14 @@ X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test = test_
 # run NN
 neural_network, X_train, X_test, scaler, val_acc1, val_acc2, val_acc3 = build_neural_network(X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input)
 print(type(neural_network))
-#X_train.sample(10000, random_state=42).to_csv("shap_background.csv", index=False)
+
+# make background csv for the API
+# assume X_train is a NumPy array with shape (N, 16)
+np.random.seed(42)  # For reproducibility
+idx = np.random.choice(X_train.shape[0], size=10000, replace=False)
+sampled_background = X_train[idx]
+df_background = pd.DataFrame(sampled_background, columns=column_names)
+df_background.to_csv("shap_background.csv", index=False)
 
 # normal shap graph - overall importance
 NN_shap_graphs(
