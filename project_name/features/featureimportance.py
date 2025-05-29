@@ -41,7 +41,7 @@ def NN_shap_graphs(model, X_train, column_names):
     # 1. Train your model
     # 2. Create background dataset for SHAP
     np.random.seed(42)  # Set seed for reproducibility
-    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
+    background = X_train.iloc[np.random.choice(X_train.shape[0], 50000, replace=False)]
 
     # 3. Define a wrapper function for multi-output model
     def model_predict(x):
@@ -64,9 +64,9 @@ def NN_shap_graphs(model, X_train, column_names):
     plt.show()
 
 
-def averaged_NN_shap_graphs(build_model_fn, X, Y1, Y2, Y3, column_names, n_runs=5):
+def averaged_NN_shap_graphs(build_model_fn, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names, n_runs=5):
     np.random.seed(42)  # For reproducibility of background selection
-    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
+    background = X_train.iloc[np.random.choice(X_train.shape[0], 50000, replace=False)]
 
     all_shap_values = []
 
@@ -74,7 +74,7 @@ def averaged_NN_shap_graphs(build_model_fn, X, Y1, Y2, Y3, column_names, n_runs=
         print(f"Training model {run+1}/{n_runs}...")
 
         # 1. Train a fresh model using your build_model_fn()
-        model = build_model_fn(X,Y1,Y2,Y3,size_input)
+        model, scaler = build_model_fn(X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input)
 
         # 2. Define model predict wrapper
         def model_predict(x):

@@ -10,11 +10,17 @@ from pydantic import BaseModel
 import keras
 from focal_loss import SparseCategoricalFocalLoss
 from .prediction_postprocessing import  make_predictions, post_processing
+import pandas as pd
+import tensorflow as tf
+import shap
 
 #Create an instance of the FastAPI and load the trained model
 app = FastAPI()
 loaded_model = keras.models.load_model("project_name/Deployment/neural_network_model.keras", custom_objects= {"SparseCategoricalFocalLoss":SparseCategoricalFocalLoss}
 )
+
+# Load background dataset for SHAP — must match model input
+background = pd.read_csv("project_name/Deployment/shap_background.csv")
 
 class ModelInput(BaseModel):
     """
@@ -38,16 +44,22 @@ class ModelInput(BaseModel):
     overweight: int
 
 @app.post("/predict")
-#Function for predictions and creating output
-async def predicition(input_data:ModelInput):
-    predicitions = make_predictions(input_data,loaded_model)
-    prediction_thinkbody, prediction_feelinglow, prediction_sleepdifficulties = post_processing(predicitions)
+async def prediction(input_data: ModelInput):
+    input_df = pd.DataFrame([input_data.dict()])
+
+    # Make predictions
+    predictions = make_predictions(input_data, loaded_model)
+    prediction_thinkbody, prediction_feelinglow, prediction_sleepdifficulties = post_processing(predictions)
+
+    # Extract top contributing features for each output
+    output_names = ["Think Body", "Feeling Low", "Sleep Difficulties"]
 
     return {
         "Risk for body image": prediction_thinkbody,
-        "Risk at feeling low" : prediction_feelinglow,
+        "Risk at feeling low": prediction_feelinglow,
         "Risk at sleep difficulties": prediction_sleepdifficulties
     }
+
 
 # Handle 404 error, client error
 @app.exception_handler(StarletteHTTPException)
