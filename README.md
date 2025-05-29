@@ -22,12 +22,88 @@ We use the HBSC (“Health Behavior in School-aged Children”) dataset from 201
 ....
 
 ## Deployment
+### Requirements 
+Before running the API, navigate the path to the root directory using the **'Folder Structure'** defined below, and install the requirements via the terminal:
 
-To run the API:
-- Start the API from the rootpath
-- In your terminal run: uvicorn project_name.Deployment.API:app --reload 
+`pip install -r requirements.txt`
 
-To use the model deployment in a web browser make sure to put /docs behind the url.
+### Run the API
+To start the API, navigate to the root directory of the project and run in the terminal:
+
+`uvicorn project_name.Deployment.API:app --reload`
+
+This will start the FastAPI server at:
+
+[FastAPI server](htttp://127.0.0.1:8000)
+
+### Send a request
+There are two ways to send a request to the API:
+1. Use the link defined above and put "/docs" behind the URL to view the automated documentation in the swagger UI.
+2. Send a curl request via the terminal
+
+Below there is an example or such a curl request and the corresponding response body of the API.
+
+**Curl Request**
+
+`curl -X 'POST' \
+  'http://127.0.0.1:8000/predict' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "irritable": 3,
+  "nervous": 3,
+  "bodyweight": 60,
+  "lifesat": 3,
+  "headache": 3,
+  "stomachache": 3,
+  "health": 3,
+  "bodyheight": 170,
+  "backache": 3,
+  "studyaccept": 3,
+  "beenbullied": 3,
+  "schoolpressure": 3,
+  "talkfather": 3,
+  "fastcomputers": 3,
+  "dizzy": 3,
+  "overweight": 0
+}
+
+**Response body**<br>
+`
+{
+  "Risk for body image": "Much too thin",
+  "Risk at feeling low": "About every day",
+  "Risk at sleep difficulties": "About every day"
+}`
+
+### Folder Structure 
+
+The path defined below depicts all the folders, but not all the files are shown as that would make the tree unclear.
+
+Applied-ML-Template/<br>
+├── Pipfile<br> 
+├── Pipfile.lock<br>
+├── README.md<br>
+├── __init__.py<br>
+├── __pycache__<br>
+│└── main.cpython-310.pyc<br> 
+├── main.py<br> 
+├── project_name<br> 
+│   ├── Deployment<br> 
+│   │  └──API.py<br>
+│   ├── __init__.py<br> 
+│   ├── __pycache__<br> 
+│   ├── data<br> 
+│   ├── features<br> 
+│   ├── models<br> 
+│   └── requirements<br> 
+└── tests<br> 
+    ├── __init__.py<br> 
+    ├── data<br> 
+    ├── features<br> 
+    ├── models<br> 
+    └── test_main.pyv
+
 
 .....
 
@@ -36,6 +112,7 @@ To use the model deployment in a web browser make sure to put /docs behind the u
 ......
 
 ## Models
+### Baseline
 We use a k-Nearest Neighbors (KNN) model as the baseline, and a multi-class neural network as the primary model for classification.
-
+### Full model 
 ......
