@@ -219,14 +219,25 @@ The neural network  is trained using the *Adam optimizer*, and the *SparseCatego
 Focal loss is used because it allows distinct class weights to each output, making it well suited for multi-task learning 
 situation with unbalanced classes. These weights are however, not yet implemented. 
 *SparseCategoricalAccuracy* is used as an evaluation metric, the accuracy is calculated separately for each output to 
-asses performance per task
-
-
+assess performance per task
 
 #### Model Justification 
 The multi-task learning neural network outperformed the three separate KNN-models, demonstrating the effectiveness 
-of the shared representations across the three targets outputs.
-SHOW THAT THE MODEL DOES MORE THAN RANDOM GUESSING
+of the shared representations across the three targets outputs. 
+To support this performance, we compared the model against a majority baseline to verify that it evaluates better than random guessing. 
+This baseline predicts the most frequent class for each target variable and is a more realistic benchmark than random guessing, especially in presence of class imbalance. 
+For each of the tree targets(Body Image, Feeling Low, Sleep Difficulty), the majority class was identified and the proportion of samples in that class was used 
+as the baseline accuracy. 
+
+The model's validation accuracy on each target was then compared to the respective majority baseline (see table). 
+In all three cases, the validation accuracy exceeded the baseline, this shows that the model learned useful patterns and made better 
+predictions than just picking the most common class. This performance suggests that the model works well, even with imbalanced classes.
+
+|   | Target           | Majority Baseline Accuracy | Validation Accuracy (Neural Network) | Above Baseline? |
+|---|------------------|----------------------------|--------------------------------------|-----------------|
+| 0 | Body Image       | 0.56                       | 0.589                                | True            |
+| 1 | Feeling Low      | 0.473                      | 0.543                                | True            |
+| 2 | Sleep Difficulty | 0.491                      | 0.543                                | True            |
 
 #### Limitations 
 There are some limitations that could affect the generalizability and performance of the model:
