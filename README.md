@@ -110,8 +110,24 @@ Applied-ML-Template/<br>
     └── test_main.pyv
 
 ## Features
-
-......
+Our first approach was to select 5 features we thought would likely inform the outcomes, however we saw that this limited the accuracy of our model (+- 30%). Therefore we proceeded to train the neural network on all available features (79) and keep only the most important ones. All features contain information about health and health behavior in physical, mental and social domains. 
+The 15 most important features that inform the overall model are (in descending order):
+1. bodyweight in kg. This was mainly important for predicting body image and feeling low.
+2. bodyheight in cm. For all three separate outcomes this was a top-3 feature. 
+3. emcsocmedsum = the sum of the scores on 9 questions about problematic social media use. 
+4. nervous = how often you feel nervous
+5. irritable = how often you feel irritable
+6. lifesat = life satisfaction 
+7. breakfastwd = how often you have breakfast on weekdays
+8. health = self-reported overall health
+9. fruits_2 = how often you eat fruits
+10. headache = how often you have headaches
+11. fight12m = how often you were in a physical fight the last 12 months
+12. friendcounton = how much you feel like you can count on your friends
+13. softdrinks_2 = how often you drink softdrinks
+14. dizzy = how often you feel dizzy
+15. sweets_2 = how often you eat sweets or chocolate
+16. friendhelp = how much you feel like your friends really try to help you
 
 ## Quantification
 
