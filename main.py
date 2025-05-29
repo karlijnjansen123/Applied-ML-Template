@@ -4,9 +4,9 @@ import numpy as np
 from IPython.display import display
 from project_name.data import preprocessing
 from project_name.models.KNN import *
-from project_name.models.NeuralNetwork import build_neural_network
+from project_name.models.NeuralNetwork import *
 from project_name.features.featureimportance import *
-
+from project_name.features.feature_correlation import *
 
 # check cwd
 print("Current working directory: ", os.getcwd())
@@ -64,11 +64,19 @@ acc, X_tr, X_te, predict_proba = KNN_solver(X, Y3)
 print("Accuracy for Sleep Difficulty:", acc)
 #KNN_shap_graphs(X_tr, X_te, predict_proba, "Sleep Difficulty", column_names=column_names)
 
+
 #run the neural network
-neural_network, X_train, X_test, scaler = build_neural_network(X,Y1,Y2,Y3,size_input)
-print(type(neural_network))
-NN_shap_graphs(
-    neural_network,
-    X_train,
-    column_names
-)
+X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test = test_train_split(X, Y1, Y2, Y3)
+neural_network, scaler = build_neural_network(X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input)
+X_train.sample(10000, random_state=42).to_csv("shap_background.csv", index=False)
+#print(type(neural_network))
+
+#averaged_NN_shap_graphs(build_neural_network, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names)
+
+#NN_shap_graphs(
+#    neural_network,
+#    X_train,
+#    column_names
+#)
+
+#feature_correlation_plot(X_train)

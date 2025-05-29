@@ -4,8 +4,7 @@ from sklearn.preprocessing import StandardScaler
 from focal_loss import SparseCategoricalFocalLoss
 import joblib
 
-
-def build_neural_network(X, Y1, Y2, Y3, input_size):
+def test_train_split(X, Y1, Y2, Y3):
     # Print statements to check imbalanced classes
     print(Y1.value_counts(normalize=True).round(3))
     print(Y2.value_counts(normalize=True).round(3))
@@ -24,6 +23,9 @@ def build_neural_network(X, Y1, Y2, Y3, input_size):
     print(Y1_train.value_counts(normalize=True).round(3))
     print('Class distribution for the test set of Y3')
     print(Y1_test.value_counts(normalize=True).round(3))
+    return X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test
+
+def build_neural_network(X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, input_size):
 
     # Normalisation of the x-features
     scaler = StandardScaler()
@@ -39,8 +41,8 @@ def build_neural_network(X, Y1, Y2, Y3, input_size):
     # Hidden Layers
     hidden1 = tf.keras.layers.Dense(128, activation='relu')(inp)
     hidden2 = tf.keras.layers.Dense(64, activation='relu')(hidden1)
-    hidden3 = tf.keras.layers.Dense(64, activation='relu')(hidden2)
-    hidden4 = tf.keras.layers.Dense(64, activation='relu')(hidden3)
+    hidden3 = tf.keras.layers.Dense(32, activation='relu')(hidden2)
+    hidden4 = tf.keras.layers.Dense(16, activation='relu')(hidden3)
 
     # Output Layers
     out1 = tf.keras.layers.Dense(
@@ -74,4 +76,4 @@ def build_neural_network(X, Y1, Y2, Y3, input_size):
     # Saving the model in the Deployment directory
     model.save('project_name/Deployment/neural_network_model.keras')
 
-    return model, X_train, X_test, scaler
+    return model, scaler
