@@ -126,19 +126,20 @@ Normalization and splitting of the data is done within the models.
 ### Baseline
 
 #### Model architecture
-The baseline model is a K-Nearest Neighbors (KNN) classifier implemented using scikit-learn. In our implementation, it 
-makes predictions based on the 3 nearest neighbors. All input features are standardized using StandardScaler to ensure 
-fair distance-based calculations. KNN is a good baseline model for our task because it doesn't assume normally 
-distributed classes, which suits our imbalanced dataset. 
+Our baseline consists of three separate multiclass KNN implemented using scikit-learn. These separate KNN will 
+generate predictions for one of the three output targets based on the input-features.
+
 
 #### Input and output
-The model uses the 16 health-related input features selected based on feature importance from the dataset. 
-These features are standardized before prediction. The model predicts one output label at a time; either body image, 
-feeling low, or sleep difficulties. 
+The model uses the 16 health-related input features selected based on feature importance from the dataset. Every KNN has one
+output target, so three in total.
+
+
 
 #### Training and evaluation
-The dataset is split into training and test sets (80/20). Accuracy is used as the evaluation metric on the test set. 
-The model also uses predict_proba to return class probabilities, which are later used for SHAP-based interpretation.
+The dataset is split into training and test sets (80/20). The input data is normalised using the *StandardScaler*, then the 
+model is trained with parameter *n_neighbors = 3*. The accuracy is used as an evaluation metric, the feature importance graphs 
+are implemented using its predictions. 
 
 ### Neural Network
 
@@ -170,4 +171,4 @@ There are some limitations that could affect the generalizability and performanc
 - The target classes are imbalanced, and apart from using Focal loss no other methods were used to mitigate this. 
 - Due to the imbalanced classes and possible bias due to sel-reported questionnaire answers, the models accuracy is limited.
 However as stated earlier, the primary significance and novelty of this tool lies in the insight it provides of how certain 
-lifestyle choices impact overall mental and physical health. 
+lifestyle choices impact overall mental and physical health.
