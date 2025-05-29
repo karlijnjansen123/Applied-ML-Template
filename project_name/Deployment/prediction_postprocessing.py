@@ -11,14 +11,14 @@ def make_predictions(input_data, loaded_model):
     :return: a numpy array for the outputs with softmax values for each class
     """
 
-    user_input = np.array([[input_data.irritable, input_data.nervous,
-                            input_data.bodyweight, input_data.lifesat,
-                            input_data.headache, input_data.stomachache,
-                            input_data.health, input_data.bodyheight,
-                            input_data.backache, input_data.studyaccept,
-                            input_data.beenbullied, input_data.schoolpressure,
-                            input_data.talkfather, input_data.fastcomputers,
-                            input_data.dizzy, input_data.overweight]])
+    user_input = np.array([[input_data.bodyweight, input_data.bodyheight,
+                       input_data.emcsocmed_sum, input_data.nervous,
+                       input_data.irritable, input_data.lifesat,
+                       input_data.breakfastwd, input_data.health,
+                       input_data.fruits_2, input_data.headache,
+                       input_data.fight12m, input_data.friendcounton,
+                       input_data.softdrinks_2, input_data.dizzy,
+                       input_data.sweets_2, input_data.friendhelp]])
 
     # Scale the input and predict
     scaler = joblib.load("project_name/Deployment/scaler.pkl")

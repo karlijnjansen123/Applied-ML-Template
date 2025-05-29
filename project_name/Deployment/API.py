@@ -19,25 +19,25 @@ loaded_model = keras.models.load_model(
 
 
 class ModelInput(BaseModel):
-    """
-    Basemodel to specify our sixteen input features for prediction
-    """
-    irritable: int
-    nervous: int
-    bodyweight: int
-    lifesat: int
-    headache: int
-    stomachache: int
-    health: int
-    bodyheight: int
-    backache: int
-    studyaccept: int
-    beenbullied: int
-    schoolpressure: int
-    talkfather: int
-    fastcomputers: int
-    dizzy: int
-    overweight: int
+   """
+   Basemodel to specify our sixteen input features for prediction
+   """
+   bodyweight: int
+   bodyheight: int
+   emcsocmed_sum: int
+   nervous: int
+   irritable: int
+   lifesat: int
+   breakfastwd: int
+   health: int
+   fruits_2: int
+   headache: int
+   fight12m: int
+   friendcounton: int
+   softdrinks_2: int
+   dizzy: int
+   sweets_2: int
+   friendhelp: int
 
 
 @app.post("/predict")
