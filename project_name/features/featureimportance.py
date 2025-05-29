@@ -152,7 +152,7 @@ def averaged_NN_shap_graphs_per_output(build_model_fn, X_train, X_test, Y1_train
         expl = shap.Explanation(
             values=values_avg[:, :, i],              # values for samples x features for output i
             base_values=base_values_avg[i],          # base value for output i
-            data=X_train[:100].values,
+            data=X_train[:100],
             feature_names=column_names
         )
 
