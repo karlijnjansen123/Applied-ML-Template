@@ -46,6 +46,7 @@ There are two ways to send a request to the API:
 1. Use the URL defined above and put "/docs" behind the URL to view the automated documentation in the swagger UI.
 2. Send a curl request via the terminal
 
+At the moment there are two endpoints in our FastAPI, use the /predict_with_shap.
 Below there is an example or such a curl request and the corresponding response body of the API. Screenshots of the API
 call and API documentation can be found under the directory screenshots_API
 
