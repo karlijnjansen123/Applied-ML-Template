@@ -29,8 +29,12 @@ clean_data = preprocessing.preprocess_hbsc_data(filepath, all_columns_minus_socm
 print(clean_data.head())
 
 # input and output
+# our initial selection for X:
 #X = clean_data[["sex", "health", "timeexe", "sweets_2", "beenbullied", "emcsocmed_sum"]]
-X = clean_data[[ "health","oweight_who", "famtalk", "backache", "schoolpressure", "breakfastwe", "studaccept", "lifesat", "headache", "stomachache",  "irritable", "nervous", "dizzy", "bodyweight", "bodyheight",  "beenbullied"]]
+# All features (79)
+X = clean_data[["emcsocmed_sum", "fasfamcar", "fasbedroom", "fascomputers", "fasbathroom", "fasdishwash", "fasholidays", "health", "lifesat", "headache", "stomachache", "backache", "irritable", "nervous", "dizzy", "physact60", "breakfastwd", "breakfastwe", "fruits_2", "vegetables_2", "sweets_2", "softdrinks_2", "fmeal", "toothbr", "timeexe", "smokltm", "smok30d_2", "alcltm", "alc30d_2", "drunkltm", "drunk30d", "cannabisltm_2", "cannabis30d_2", "bodyweight", "bodyheight", "likeschool", "schoolpressure", "studtogether", "studhelpful", "studaccept", "teacheraccept", "teachercare", "teachertrust", "bulliedothers", "beenbullied", "cbulliedothers", "cbeenbullied", "fight12m", "injured12m", "friendhelp", "friendcounton", "friendshare", "friendtalk", "hadsex", "agesex", "contraceptcondom", "contraceptpill", "motherhome1", "fatherhome1", "stepmohome1", "stepfahome1", "fosterhome1", "elsehome1_2", "employfa", "employmo", "employnotfa", "employnotmo", "talkfather", "talkmother", "talkstepmo", "famhelp", "famsup", "famtalk", "famdec", "MBMI", "IRFAS", "IRRELFAS_LMH", "IOTF4", "oweight_who"]]
+# The most important features
+#X = clean_data[]
 Y1 = clean_data["thinkbody"]
 Y2 = clean_data["feellow"]
 Y3 = clean_data["sleepdificulty"]
@@ -39,9 +43,12 @@ Y1 = pd.to_numeric(Y1, errors='raise')
 Y2 = pd.to_numeric(Y2, errors='raise')
 Y3 = pd.to_numeric(Y3, errors='raise')
 
-#column_names = ["sex", "subj. health", "vig. exercise", "eating sweets", "being bullied", "social media"]
+# column names of initial election
+# column_names = ["sex", "subj. health", "vig. exercise", "eating sweets", "being bullied", "social media"]
+# all column names
 column_names = ["emcsocmed_sum", "fasfamcar", "fasbedroom", "fascomputers", "fasbathroom", "fasdishwash", "fasholidays", "health", "lifesat", "headache", "stomachache", "backache", "irritable", "nervous", "dizzy", "physact60", "breakfastwd", "breakfastwe", "fruits_2", "vegetables_2", "sweets_2", "softdrinks_2", "fmeal", "toothbr", "timeexe", "smokltm", "smok30d_2", "alcltm", "alc30d_2", "drunkltm", "drunk30d", "cannabisltm_2", "cannabis30d_2", "bodyweight", "bodyheight", "likeschool", "schoolpressure", "studtogether", "studhelpful", "studaccept", "teacheraccept", "teachercare", "teachertrust", "bulliedothers", "beenbullied", "cbulliedothers", "cbeenbullied", "fight12m", "injured12m", "friendhelp", "friendcounton", "friendshare", "friendtalk", "hadsex", "agesex", "contraceptcondom", "contraceptpill", "motherhome1", "fatherhome1", "stepmohome1", "stepfahome1", "fosterhome1", "elsehome1_2", "employfa", "employmo", "employnotfa", "employnotmo", "talkfather", "talkmother", "talkstepmo", "famhelp", "famsup", "famtalk", "famdec", "MBMI", "IRFAS", "IRRELFAS_LMH", "IOTF4", "oweight_who"]
-
+# column names of most important features
+# column_names = []
 size_input = X.shape[1]
 print(size_input)
 
@@ -67,10 +74,11 @@ print("Accuracy for Sleep Difficulty:", acc)
 
 #run the neural network
 X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test = test_train_split(X, Y1, Y2, Y3)
-neural_network, scaler = build_neural_network(X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input)
-X_train.sample(10000, random_state=42).to_csv("shap_background.csv", index=False)
+#neural_network, scaler = build_neural_network(X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input)
+#X_train.sample(10000, random_state=42).to_csv("shap_background.csv", index=False)
 #print(type(neural_network))
 
+averaged_NN_shap_graphs_per_output(build_neural_network, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names, n_runs=1)
 #averaged_NN_shap_graphs(build_neural_network, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names)
 
 #NN_shap_graphs(
