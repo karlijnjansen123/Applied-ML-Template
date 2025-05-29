@@ -40,7 +40,8 @@ def KNN_shap_graphs(X_train, X_test, predict_proba, y_name, num_explain=10, colu
 def NN_shap_graphs(model, X_train, column_names):
     # 1. Train your model
     # 2. Create background dataset for SHAP
-    background = X_train[np.random.choice(X_train.shape[0], 1000, replace=False)]
+    np.random.seed(42)  # Set seed for reproducibility
+    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
 
     # 3. Define a wrapper function for multi-output model
     def model_predict(x):
@@ -52,12 +53,56 @@ def NN_shap_graphs(model, X_train, column_names):
     explainer = shap.Explainer(model_predict, background)
 
     # 5. Compute SHAP values
-    shap_values = explainer(X_train[:100])
+    shap_values = explainer(X_train[:1000])
 
     # 6. Plot
     #fig, axes = plt.subplots(1, 1, figsize=(12, 18)) 
     shap.summary_plot(shap_values, X_train[:100], feature_names=column_names, show=False)
     plt.gca().legend_.remove() 
 
+    plt.tight_layout()
+    plt.show()
+
+
+def averaged_NN_shap_graphs(build_model_fn, X, Y1, Y2, Y3, column_names, n_runs=5):
+    np.random.seed(42)  # For reproducibility of background selection
+    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
+
+    all_shap_values = []
+
+    for run in range(n_runs):
+        print(f"Training model {run+1}/{n_runs}...")
+
+        # 1. Train a fresh model using your build_model_fn()
+        model = build_model_fn(X,Y1,Y2,Y3,size_input)
+
+        # 2. Define model predict wrapper
+        def model_predict(x):
+            x_tensor = tf.convert_to_tensor(x, dtype=tf.float32)
+            preds = model(x_tensor, training=False)
+            return tf.concat(preds, axis=1).numpy()
+
+        # 3. Explain model using SHAP
+        explainer = shap.Explainer(model_predict, background)
+        shap_values = explainer(X_train[:1000])  # Or a fixed sample
+
+        all_shap_values.append(shap_values)
+
+    # 4. Average SHAP values
+    print("Averaging SHAP values...")
+    base_values_avg = np.mean([sv.base_values for sv in all_shap_values], axis=0)
+    values_avg = np.mean([sv.values for sv in all_shap_values], axis=0)
+
+    # 5. Create an averaged SHAP object for plotting
+    avg_shap = shap.Explanation(
+        values=values_avg,
+        base_values=base_values_avg,
+        data=X_train[:1000],
+        feature_names=column_names
+    )
+
+    # 6. Plot summary
+    shap.summary_plot(avg_shap, X_train[:100], feature_names=column_names, show=False)
+    plt.gca().legend_.remove()
     plt.tight_layout()
     plt.show()

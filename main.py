@@ -6,7 +6,7 @@ from project_name.data import preprocessing
 from project_name.models.KNN import *
 from project_name.models.NeuralNetwork import build_neural_network
 from project_name.features.featureimportance import *
-
+from project_name.features.feature_correlation import *
 
 # check cwd
 print("Current working directory: ", os.getcwd())
@@ -66,9 +66,14 @@ print("Accuracy for Sleep Difficulty:", acc)
 
 #run the neural network
 neural_network, X_train, X_test, scaler = build_neural_network(X,Y1,Y2,Y3,size_input)
-print(type(neural_network))
-NN_shap_graphs(
-    neural_network,
-    X_train,
-    column_names
-)
+#print(type(neural_network))
+
+averaged_NN_shap_graphs(build_neural_network, X, Y1, Y2, Y3, size_input, column_names)
+
+#NN_shap_graphs(
+#    neural_network,
+#    X_train,
+#    column_names
+#)
+
+#feature_correlation_plot(X_train)
