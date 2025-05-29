@@ -41,7 +41,7 @@ def NN_shap_graphs(model, X_train, column_names):
     # 1. Train your model
     # 2. Create background dataset for SHAP
     np.random.seed(42)  # Set seed for reproducibility
-    background = X_train.iloc[np.random.choice(X_train.shape[0], 50000, replace=False)]
+    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
 
     # 3. Define a wrapper function for multi-output model
     def model_predict(x):
@@ -66,7 +66,7 @@ def NN_shap_graphs(model, X_train, column_names):
 
 def averaged_NN_shap_graphs(build_model_fn, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names, n_runs=5):
     np.random.seed(42)  # For reproducibility of background selection
-    background = X_train.iloc[np.random.choice(X_train.shape[0], 50000, replace=False)]
+    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
 
     all_shap_values = []
 
@@ -109,7 +109,7 @@ def averaged_NN_shap_graphs(build_model_fn, X_train, X_test, Y1_train, Y1_test, 
 
 def averaged_NN_shap_graphs_per_output(build_model_fn, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names, n_runs=5):
     np.random.seed(42)  # For reproducibility of background selection
-    background = X_train.iloc[np.random.choice(X_train.shape[0], 50000, replace=False)]
+    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
 
     all_shap_values = []
 
@@ -117,7 +117,7 @@ def averaged_NN_shap_graphs_per_output(build_model_fn, X_train, X_test, Y1_train
         print(f"Training model {run+1}/{n_runs}...")
 
         # Train a fresh model using your build_model_fn()
-        model, scaler = build_model_fn(
+        model, X_train, X_test, scaler, val_acc1, val_acc2, val_acc3 = build_model_fn(
             X_train, X_test,
             Y1_train, Y1_test,
             Y2_train, Y2_test,
@@ -152,9 +152,9 @@ def averaged_NN_shap_graphs_per_output(build_model_fn, X_train, X_test, Y1_train
         expl = shap.Explanation(
             values=values_avg[:, :, i],              # values for samples x features for output i
             base_values=base_values_avg[i],          # base value for output i
-            data=X_train.iloc[:1000].values,
+            data=X_train[:100].values,
             feature_names=column_names
         )
 
         # Plot SHAP summary plot per output
-        shap.summary_plot(expl, X_train.iloc[:100], feature_names=column_names, show=True)
+        shap.summary_plot(expl, X_train[:100], feature_names=column_names, show=True)

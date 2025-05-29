@@ -4,8 +4,7 @@ from sklearn.preprocessing import StandardScaler
 from focal_loss import SparseCategoricalFocalLoss
 import joblib
 
-
-def build_neural_network(X, Y1, Y2, Y3, input_size):
+def test_train_split(X, Y1, Y2, Y3):
     # Print statements to check imbalanced classes
     print(Y1.value_counts(normalize=True).round(3))
     print(Y2.value_counts(normalize=True).round(3))
@@ -24,6 +23,10 @@ def build_neural_network(X, Y1, Y2, Y3, input_size):
     print(Y1_train.value_counts(normalize=True).round(3))
     print('Class distribution for the test set of Y3')
     print(Y1_test.value_counts(normalize=True).round(3))
+    return X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test
+
+
+def build_neural_network(X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input):
 
     # Normalisation of the x-features
     scaler = StandardScaler()
@@ -34,7 +37,7 @@ def build_neural_network(X, Y1, Y2, Y3, input_size):
     joblib.dump(scaler, "./project_name/Deployment/scaler.pkl")
 
     # Input Layer; when model is loaded it expects a numpy array of same size
-    inp = tf.keras.Input(shape=(input_size,))
+    inp = tf.keras.Input(shape=(size_input,))
 
     # Hidden Layers
     hidden1 = tf.keras.layers.Dense(128, activation='relu')(inp)
@@ -69,7 +72,7 @@ def build_neural_network(X, Y1, Y2, Y3, input_size):
         'think_body': Y1_train - 1,  # make it a 0-based index
         'feeling_low': Y2_train - 1,
         'sleep_difficulty': Y3_train - 1
-    }, epochs=10, batch_size=32, validation_split=0.2)
+    }, epochs=1, batch_size=32, validation_split=0.2)
 
     # Extract the latest validation accuracies from history
     val_accuracy_thinkbody = history.history['val_think_body_sparse_categorical_accuracy'][-1]
@@ -78,6 +81,5 @@ def build_neural_network(X, Y1, Y2, Y3, input_size):
 
     # Saving the model in the Deployment directory
     model.save('project_name/Deployment/neural_network_model.keras')
-
 
     return model, X_train, X_test, scaler, val_accuracy_thinkbody, val_accuracy_feelinglow, val_accuracy_sleepdiff
