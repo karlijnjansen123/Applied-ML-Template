@@ -2,7 +2,6 @@
 Run the API from the project root:
 uvicorn project_name.Deployment.API:app --reload
 """
-
 from fastapi import FastAPI, Request
 from fastapi.responses import Response, JSONResponse
 from fastapi.exceptions import RequestValidationError
@@ -133,18 +132,7 @@ async def predict_with_shap(input_data: ModelInput):
     ) = post_processing(predictions)
 
     top_features = get_top3_shap_features_single(explainer, X_input, column_names)
-
-
     features_body, features_feelinlow, features_sleep = postprocessing_shap(top_features)
-
-
-
-
-
-
-
-
-
     return {
         "predictions": {
             "Prediction for body image": prediction_thinkbody,
