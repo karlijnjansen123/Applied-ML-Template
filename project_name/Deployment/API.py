@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from typing import List
 import keras
 from focal_loss import SparseCategoricalFocalLoss
-from .prediction_postprocessing import make_predictions, post_processing,postprocessing_shap
+from .prediction_postprocessing import make_predictions, post_processing, postprocessing_shap
 import pandas as pd
 import tensorflow as tf
 import shap
@@ -27,6 +27,7 @@ model = keras.models.load_model(
     custom_objects={"SparseCategoricalFocalLoss": SparseCategoricalFocalLoss}
 )
 
+
 # Create SHAP explainer once for the model
 def model_predict(x):
     x_tensor = tf.convert_to_tensor(x, dtype=tf.float32)
@@ -34,6 +35,7 @@ def model_predict(x):
     preds_np = [p.numpy() for p in preds]
     combined = np.concatenate(preds_np, axis=1)  # shape: (batch_size, total_classes)
     return combined
+
 
 explainer = shap.PermutationExplainer(model_predict, background)
 
@@ -43,6 +45,7 @@ column_names = [
     "health", "fruits_2", "headache", "fight12m", "friendcounton", "softdrinks_2", "dizzy",
     "sweets_2", "friendhelp"
 ]
+
 
 # Function to get top 3 SHAP features per output
 def get_top3_shap_features_single(explainer, X_sample, column_names):
@@ -65,8 +68,8 @@ def get_top3_shap_features_single(explainer, X_sample, column_names):
         if len(shap_values.values.shape) == 3:
             idx = list(outputs.keys()).index(output_name)
             output_shap_values = shap_values.values[0][
-                num_classes_per_output * idx : num_classes_per_output * (idx + 1)
-            , :]
+                num_classes_per_output * idx: num_classes_per_output * (idx + 1), :
+            ]
             feature_importance = np.sum(np.abs(output_shap_values), axis=0)
         else:
             # fallback - sum absolute values along last axis
@@ -78,9 +81,11 @@ def get_top3_shap_features_single(explainer, X_sample, column_names):
 
     return top_features
 
+
 # Pydantic models
 class ShapPredictionInput(BaseModel):
     features: List[float]
+
 
 class ModelInput(BaseModel):
     bodyweight: int
@@ -99,6 +104,7 @@ class ModelInput(BaseModel):
     dizzy: int
     sweets_2: int
     friendhelp: int
+
 
 @app.post("/predict_with_shap")
 async def predict_with_shap(input_data: ModelInput):
@@ -138,11 +144,12 @@ async def predict_with_shap(input_data: ModelInput):
             "Prediction for body image": prediction_thinkbody,
             "Prediction at feeling low": prediction_feelinglow,
             "Prediction at sleep difficulties": prediction_sleepdifficulties,
-            "Top features attributing to body image prediction" : features_body,
+            "Top features attributing to body image prediction": features_body,
             "Top features attributing to feelinglow prediction": features_feelinlow,
             "Top features attributing to sleep prediction": features_sleep
 
         }}
+
 
 @app.post("/predict")
 async def prediction(input_data: ModelInput):
@@ -159,6 +166,7 @@ async def prediction(input_data: ModelInput):
         "Risk at sleep difficulties": prediction_sleepdifficulties
     }
 
+
 # Exception handlers
 @app.exception_handler(StarletteHTTPException)
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
@@ -169,12 +177,14 @@ async def custom_http_exception_handler(request: Request, exc: StarletteHTTPExce
         content={"detail": f"Page '{request.url.path}' not found (HTTP {exc.status_code})"}
     )
 
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=422,
         content={"detail": "Input data is invalid", "errors": exc.errors()}
     )
+
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):

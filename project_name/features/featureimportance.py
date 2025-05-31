@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
+
 def KNN_shap_graphs(X_train, X_test, predict_proba, y_name, num_explain=10, column_names=None):
 
     if column_names is None:
@@ -14,7 +15,7 @@ def KNN_shap_graphs(X_train, X_test, predict_proba, y_name, num_explain=10, colu
     X_test_df = pd.DataFrame(X_test, columns=column_names)
 
     # Use a subset of background data
-    background = shap.sample(X_train_df, 1000, random_state=0) #use a background of 1000 samples
+    background = shap.sample(X_train_df, 1000, random_state=0)  # use a background of 1000 samples
 
     # Use Explainer
     explainer = shap.Explainer(predict_proba, background)
@@ -56,15 +57,22 @@ def NN_shap_graphs(model, X_train, column_names):
     shap_values = explainer(X_train[:1000])
 
     # 6. Plot
-    #fig, axes = plt.subplots(1, 1, figsize=(12, 18)) 
+    # fig, axes = plt.subplots(1, 1, figsize=(12, 18))
     shap.summary_plot(shap_values, X_train[:100], feature_names=column_names, show=False)
-    plt.gca().legend_.remove() 
+    plt.gca().legend_.remove()
 
     plt.tight_layout()
     plt.show()
 
 
-def averaged_NN_shap_graphs(build_model_fn, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names, n_runs=5):
+def averaged_NN_shap_graphs(
+        build_model_fn,
+        X_train, X_test,
+        Y1_train, Y1_test,
+        Y2_train, Y2_test,
+        Y3_train, Y3_test,
+        size_input, column_names, n_runs=5
+):
     np.random.seed(42)  # For reproducibility of background selection
     background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
 
@@ -107,7 +115,15 @@ def averaged_NN_shap_graphs(build_model_fn, X_train, X_test, Y1_train, Y1_test, 
     plt.tight_layout()
     plt.show()
 
-def averaged_NN_shap_graphs_per_output(build_model_fn, X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test, size_input, column_names, n_runs=5):
+
+def averaged_NN_shap_graphs_per_output(
+        build_model_fn,
+        X_train, X_test,
+        Y1_train, Y1_test,
+        Y2_train, Y2_test,
+        Y3_train, Y3_test,
+        size_input, column_names, n_runs=5,
+):
     np.random.seed(42)  # For reproducibility of background selection
     background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
 

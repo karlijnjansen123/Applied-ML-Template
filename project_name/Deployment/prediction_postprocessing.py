@@ -2,7 +2,6 @@ import numpy as np
 import joblib
 
 
-
 def make_predictions(input_data, loaded_model):
     """
     Function that makes predictions
@@ -12,14 +11,18 @@ def make_predictions(input_data, loaded_model):
     :return: a numpy array for the outputs with softmax values for each class
     """
 
-    user_input = np.array([[input_data.bodyweight, input_data.bodyheight,
-                       input_data.emcsocmed_sum, input_data.nervous,
-                       input_data.irritable, input_data.lifesat,
-                       input_data.breakfastwd, input_data.health,
-                       input_data.fruits_2, input_data.headache,
-                       input_data.fight12m, input_data.friendcounton,
-                       input_data.softdrinks_2, input_data.dizzy,
-                       input_data.sweets_2, input_data.friendhelp]])
+    user_input = np.array([
+        [
+            input_data.bodyweight, input_data.bodyheight,
+            input_data.emcsocmed_sum, input_data.nervous,
+            input_data.irritable, input_data.lifesat,
+            input_data.breakfastwd, input_data.health,
+            input_data.fruits_2, input_data.headache,
+            input_data.fight12m, input_data.friendcounton,
+            input_data.softdrinks_2, input_data.dizzy,
+            input_data.sweets_2, input_data.friendhelp
+        ]
+    ])
 
     # Scale the input and predict
     scaler = joblib.load("project_name/Deployment/scaler.pkl")
@@ -38,9 +41,9 @@ def post_processing(prediction):
 
     # Softmax values for each output
     output_classes = {
-    "ThinkBodyClass": int(np.argmax(prediction[0][0])),
-    "FeelingLowClass": int(np.argmax(prediction[1][0])),
-    "SleepDifficultiesClass": int(np.argmax(prediction[2][0]))
+        "ThinkBodyClass": int(np.argmax(prediction[0][0])),
+        "FeelingLowClass": int(np.argmax(prediction[1][0])),
+        "SleepDifficultiesClass": int(np.argmax(prediction[2][0]))
     }
 
     # Save the predictions as variables and shift to 1-based index
@@ -48,7 +51,6 @@ def post_processing(prediction):
     feelinglow_class = output_classes["FeelingLowClass"] + 1
     sleepdifficulties_class = output_classes["SleepDifficultiesClass"] + 1
 
-    
     # Defining the values corresponding to the predicted classes
     thinkbody_dict = {
         '1': 'Much too thin',
@@ -74,14 +76,21 @@ def post_processing(prediction):
 
     # Save the values as variables
     index_class_thinkbody = output_classes["ThinkBodyClass"]
-    index_class_feelinglow = output_classes["FeelingLowClass"]  
-    index_class_sleep = output_classes["SleepDifficultiesClass"]  
+    index_class_feelinglow = output_classes["FeelingLowClass"]
+    index_class_sleep = output_classes["SleepDifficultiesClass"]
 
     predicted_thinkbody = str(thinkbody_dict[str(thinkbody_class)])
     predicted_feelinglow = str(feelinglow_dict[str(feelinglow_class)])
     predicted_sleep = str(sleepdifficulties_dict[str(sleepdifficulties_class)])
 
-    return predicted_thinkbody, predicted_feelinglow, predicted_sleep, index_class_thinkbody,index_class_feelinglow,index_class_sleep
+    return (
+        predicted_thinkbody,
+        predicted_feelinglow,
+        predicted_sleep,
+        index_class_thinkbody,
+        index_class_feelinglow,
+        index_class_sleep,
+    )
 
 
 def postprocessing_shap(top_features):
@@ -90,6 +99,6 @@ def postprocessing_shap(top_features):
     topfeatures_sleep = top_features["Risk at sleep difficulties"]
     features_body = ",".join([feature[0] for feature in topfeatures_body])
     features_feelinlow = ",".join([feature[0] for feature in topfeatures_feelinglow])
-    features_sleep =",".join([feature[0] for feature in topfeatures_sleep])
+    features_sleep = ",".join([feature[0] for feature in topfeatures_sleep])
 
-    return features_body,features_feelinlow,features_sleep
+    return features_body, features_feelinlow, features_sleep
