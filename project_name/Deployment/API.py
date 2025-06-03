@@ -17,10 +17,10 @@ import shap
 import numpy as np
 import traceback
 
-# Load background dataset for SHAP explainer
+# Load background dataset for SHAP explainer , DIFFERENT FILE, USED FOR EXPLAINER
 background = pd.read_csv('shap_background.csv').values  # (1000, num_features)
 
-# Load your model
+# Load your model, KEEP IN FILE
 app = FastAPI()
 model = keras.models.load_model(
     "project_name/Deployment/neural_network_model.keras",
@@ -28,7 +28,7 @@ model = keras.models.load_model(
 )
 
 
-# Create SHAP explainer once for the model
+# Create SHAP explainer once for the model, DIFFERENT FILE
 def model_predict(x):
     x_tensor = tf.convert_to_tensor(x, dtype=tf.float32)
     preds = model(x_tensor, training=False)  # preds is a list of 3 arrays
@@ -36,10 +36,11 @@ def model_predict(x):
     combined = np.concatenate(preds_np, axis=1)  # shape: (batch_size, total_classes)
     return combined
 
-
+#USED GET_TOP3_SHAP_FEATURES, SO ALSO DIFFERENT FILE
 explainer = shap.PermutationExplainer(model_predict, background)
 
 # Define column names (must match order of features in shap_background.csv and model input)
+#USED IN GET_TOP3_SHAP , SO ALSO DIFFERENT FILE
 column_names = [
     "bodyweight", "bodyheight", "emcsocmed_sum", "nervous", "irritable", "lifesat", "breakfastwd",
     "health", "fruits_2", "headache", "fight12m", "friendcounton", "softdrinks_2", "dizzy",
@@ -47,7 +48,7 @@ column_names = [
 ]
 
 
-# Function to get top 3 SHAP features per output
+# Function to get top 3 SHAP features per output, DIFFERENT FILE
 def get_top3_shap_features_single(explainer, X_sample, column_names):
     if X_sample.ndim == 1:
         X_sample = X_sample[np.newaxis, :]
@@ -84,10 +85,17 @@ def get_top3_shap_features_single(explainer, X_sample, column_names):
 
 # Pydantic models
 class ShapPredictionInput(BaseModel):
+    """
+    KEEP IN FILE
+    """
     features: List[float]
 
 
 class ModelInput(BaseModel):
+    """
+
+    Keep in file
+    """
     bodyweight: int
     bodyheight: int
     emcsocmed_sum: int
@@ -105,7 +113,7 @@ class ModelInput(BaseModel):
     sweets_2: int
     friendhelp: int
 
-
+#KEEP IN FILE
 @app.post("/predict_with_shap")
 async def predict_with_shap(input_data: ModelInput):
     X_input = np.array([
@@ -151,23 +159,10 @@ async def predict_with_shap(input_data: ModelInput):
         }}
 
 
-@app.post("/predict")
-async def prediction(input_data: ModelInput):
-    predictions = make_predictions(input_data, model)
-    (
-        prediction_thinkbody,
-        prediction_feelinglow,
-        prediction_sleepdifficulties
-    ) = post_processing(predictions)
-
-    return {
-        "Risk for body image": prediction_thinkbody,
-        "Risk at feeling low": prediction_feelinglow,
-        "Risk at sleep difficulties": prediction_sleepdifficulties
-    }
 
 
-# Exception handlers
+
+# Exception handlers KEEP IN FILE
 @app.exception_handler(StarletteHTTPException)
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
     if exc.status_code == 404 and request.url.path == "/favicon.ico":
@@ -177,7 +172,7 @@ async def custom_http_exception_handler(request: Request, exc: StarletteHTTPExce
         content={"detail": f"Page '{request.url.path}' not found (HTTP {exc.status_code})"}
     )
 
-
+#KEEP IN FILE
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
@@ -185,14 +180,13 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={"detail": "Input data is invalid", "errors": exc.errors()}
     )
 
-
+#KEEP IN FILE
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
     tb = traceback.format_exc()
     return JSONResponse(
         status_code=500,
         content={
-            "detail": "An unexpected internal error occurred, please try again later.",
-            "traceback": tb
+            "detail": "An unexpected internal error occurred, please try again later."
         }
     )
