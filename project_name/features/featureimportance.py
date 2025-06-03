@@ -6,6 +6,17 @@ import tensorflow as tf
 
 
 def KNN_shap_graphs(X_train, X_test, predict_proba, y_name, num_explain=10, column_names=None):
+    """
+    Function that generates SHAP plots for a KNN classifier to explain feature contributions
+
+    :param X_train: Training input features
+    :param X_test: Test input features
+    :param predict_proba: Callable that returns class probabilities
+    :param y_name: Label or title for the current target being explained
+    :param num_explain: Number fo test samples to explain
+    :param column_names: List of feature names
+    :return: SHAP values for the explained samples
+    """
 
     if column_names is None:
         column_names = [f'Feature {i}' for i in range(X_train.shape[1])]
@@ -35,10 +46,22 @@ def KNN_shap_graphs(X_train, X_test, predict_proba, y_name, num_explain=10, colu
     plt.title(str(y_name))
     plt.tight_layout()
     plt.show()
+
     return shap_values
 
 
 def NN_shap_graphs(model, X_train, column_names):
+    """
+    Function to compute and visualize SHAP values for a trained NN model
+    using a sampled background dataset and visualizes the feature
+    importance with a summary plot
+
+    :param model: Trained multi-class neural network model
+    :param X_train: Trained input features
+    :param column_names: List of feature names
+    :return: None
+    """
+
     # 1. Train your model
     # 2. Create background dataset for SHAP
     np.random.seed(42)  # Set seed for reproducibility
@@ -73,6 +96,21 @@ def averaged_NN_shap_graphs(
         Y3_train, Y3_test,
         size_input, column_names, n_runs=5
 ):
+    """
+    Function that trains the same neural network multiple times, computes
+    SHAP values for each, averages them and plots a single SHAP summary plot
+
+    :param build_model_fn: Function to build and train a fresh model
+    :param X_train: Training features
+    :param X_test: Test features
+    :param Y1_train, Y2_train, Y3_train: Target labels for training
+    :param Y1_test, Y2_test, Y3_test: Target labels for testing
+    :param size_input: Number of input features
+    :param column_names: List of feature names
+    :param n_runs: Number of repeated training runs to average
+    :return: None
+    """
+
     np.random.seed(42)  # For reproducibility of background selection
     background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
 
@@ -124,6 +162,12 @@ def averaged_NN_shap_graphs_per_output(
         Y3_train, Y3_test,
         size_input, column_names, n_runs=5,
 ):
+    """
+    Same as averaged_NN_shap_graphs, but generates a separate SHAP summary plot
+    for each model output.
+
+    """
+
     np.random.seed(42)  # For reproducibility of background selection
     background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
 

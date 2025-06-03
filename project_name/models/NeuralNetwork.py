@@ -50,12 +50,8 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
 
     :param X_train: Scaled training input features
     :param X_test: Scaled test input features
-    :param Y1_train: Training labels for body image
-    :param Y1_test: Testing labels for body image
-    :param Y2_train: Training labels for feeling low
-    :param Y2_test: Testing labels for feeling low
-    :param Y3_train: Training labels for sleep difficulty
-    :param Y3_test: Testing labels for sleep difficulty
+    :param Y1_train, Y2_train, Y3_train: Training labels for body image, feeling low, and sleep difficulty
+    :param Y1_test, Y2_test, Y3_test: Testing labels for body image, feeling low, and sleep difficulty
     :param size_input: Number of input features
     :return: Tuple containing the trained model, scaled train and test X,
     the scalar, and final validation accuracy for each output
