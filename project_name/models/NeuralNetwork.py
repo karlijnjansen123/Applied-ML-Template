@@ -41,12 +41,17 @@ def test_train_split(X, Y1, Y2, Y3):
             Y3_train, Y3_test)
 
 
+import tensorflow as tf
+from sklearn.preprocessing import StandardScaler
+from focal_loss import SparseCategoricalFocalLoss
+import joblib
+
 def build_neural_network(X_train, X_test, Y1_train, Y1_test,
                          Y2_train, Y2_test, Y3_train, Y3_test,
                          size_input):
     """
     Function to build, compile, train and save a multi-output neural network
-    for predicting the 3 output variables.
+    using Rank 1 hyperparameters and early stopping.
 
     :param X_train: Scaled training input features
     :param X_test: Scaled test input features
@@ -54,7 +59,7 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     :param Y1_test, Y2_test, Y3_test: Testing labels for body image, feeling low, and sleep difficulty
     :param size_input: Number of input features
     :return: Tuple containing the trained model, scaled train and test X,
-    the scalar, and final validation accuracy for each output
+    the scaler, and final validation accuracy for each output
     """
 
     # Normalisation of the x-features
@@ -65,27 +70,27 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     # Save the scaler in the Deployment folder to use for API
     joblib.dump(scaler, "./project_name/Deployment/scaler.pkl")
 
-    # Input Layer; when model is loaded it expects a numpy array of same size
+    # Input Layer
     inp = tf.keras.Input(shape=(size_input,))
 
-    # Hidden Layers
-    hidden1 = tf.keras.layers.Dense(128, activation='relu')(inp)
+    # Hidden Layers (Rank 1 configuration)
+    hidden1 = tf.keras.layers.Dense(64, activation='relu')(inp)
     hidden2 = tf.keras.layers.Dense(64, activation='relu')(hidden1)
     hidden3 = tf.keras.layers.Dense(32, activation='relu')(hidden2)
-    hidden4 = tf.keras.layers.Dense(16, activation='relu')(hidden3)
 
     # Output Layers
-    out1 = tf.keras.layers.Dense(
-        5, activation='softmax', name='think_body')(hidden4)
-    out2 = tf.keras.layers.Dense(
-        5, activation='softmax', name='feeling_low')(hidden4)
-    out3 = tf.keras.layers.Dense(
-        5, activation='softmax', name='sleep_difficulty')(hidden4)
+    out1 = tf.keras.layers.Dense(5, activation='softmax', name='think_body')(hidden3)
+    out2 = tf.keras.layers.Dense(5, activation='softmax', name='feeling_low')(hidden3)
+    out3 = tf.keras.layers.Dense(5, activation='softmax', name='sleep_difficulty')(hidden3)
 
     # Model
-    model = tf.keras.Model(inp, [out1, out2, out3])
+    model = tf.keras.Model(inputs=inp, outputs=[out1, out2, out3])
+
+    # Optimizer (Rank 1 configuration from hyperparameter tuning)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+
     model.compile(
-        optimizer='adam',
+        optimizer=optimizer,
         loss={
             'think_body': SparseCategoricalFocalLoss(gamma=2),
             'feeling_low': SparseCategoricalFocalLoss(gamma=2),
@@ -97,11 +102,26 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
             'sleep_difficulty': tf.keras.metrics.SparseCategoricalAccuracy()
         }
     )
-    history = model.fit(X_train, {
-        'think_body': Y1_train - 1,  # Make it a 0-based index
-        'feeling_low': Y2_train - 1,
-        'sleep_difficulty': Y3_train - 1
-    }, epochs=10, batch_size=32, validation_split=0.2)
+
+    # Early stopping callback
+    early_stopping = tf.keras.callbacks.EarlyStopping(
+        monitor='val_loss',
+        patience=3,
+        restore_best_weights=True,
+        verbose=1
+    )
+
+    history = model.fit(
+        X_train, {
+            'think_body': Y1_train - 1,
+            'feeling_low': Y2_train - 1,
+            'sleep_difficulty': Y3_train - 1
+        },
+        epochs=20,  # Let early stopping decide when to stop
+        batch_size=32,
+        validation_split=0.2,
+        callbacks=[early_stopping]
+    )
 
     # Extract the latest validation accuracies from history
     val_accuracy_thinkbody = history.history[
@@ -110,7 +130,8 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
         'val_feeling_low_sparse_categorical_accuracy'][-1]
     val_accuracy_sleepdiff = history.history[
         'val_sleep_difficulty_sparse_categorical_accuracy'][-1]
-    # Saving the model in the Deployment directory
+
+    # Save the model
     model.save('project_name/Deployment/neural_network_model.keras')
 
     return (model, X_train, X_test,
