@@ -181,7 +181,6 @@ async def general_exception_handler(request: Request, exc: Exception):
     return JSONResponse(
         status_code=500,
         content={
-            "detail": "An unexpected internal error occurred, please try again later.",
-            "traceback": tb
+            "detail": "An unexpected internal error occurred, please try again later."
         }
     )
