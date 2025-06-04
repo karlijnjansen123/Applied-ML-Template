@@ -6,6 +6,16 @@ import joblib
 
 
 def test_train_split(X, Y1, Y2, Y3):
+    """
+    Function to split feature and target data into training and testing sets
+
+    :param X: Feature dataframe
+    :param Y1: Output variable for body image
+    :param Y2: Output variable for feeling low
+    :param Y3: Output variable for sleep difficulty
+    :return: Train-test splits for X, Y1, Y2 and Y3
+    """
+
     # Print statements to check imbalanced classes
     print(Y1.value_counts(normalize=True).round(3))
     print(Y2.value_counts(normalize=True).round(3))
@@ -24,6 +34,7 @@ def test_train_split(X, Y1, Y2, Y3):
     print(Y1_train.value_counts(normalize=True).round(3))
     print('Class distribution for the test set of Y3')
     print(Y1_test.value_counts(normalize=True).round(3))
+
     return (X_train, X_test,
             Y1_train, Y1_test,
             Y2_train, Y2_test,
@@ -33,6 +44,19 @@ def test_train_split(X, Y1, Y2, Y3):
 def build_neural_network(X_train, X_test, Y1_train, Y1_test,
                          Y2_train, Y2_test, Y3_train, Y3_test,
                          size_input):
+    """
+    Function to build, compile, train and save a multi-output neural network
+    for predicting the 3 output variables.
+
+    :param X_train: Scaled training input features
+    :param X_test: Scaled test input features
+    :param Y1_train, Y2_train, Y3_train: Training labels for body image, feeling low, and sleep difficulty
+    :param Y1_test, Y2_test, Y3_test: Testing labels for body image, feeling low, and sleep difficulty
+    :param size_input: Number of input features
+    :return: Tuple containing the trained model, scaled train and test X,
+    the scalar, and final validation accuracy for each output
+    """
+
     # Normalisation of the x-features
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
@@ -77,7 +101,7 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
         'think_body': Y1_train - 1,  # Make it a 0-based index
         'feeling_low': Y2_train - 1,
         'sleep_difficulty': Y3_train - 1
-    }, epochs=1, batch_size=32, validation_split=0.2)
+    }, epochs=10, batch_size=32, validation_split=0.2)
 
     # Extract the latest validation accuracies from history
     val_accuracy_thinkbody = history.history[
