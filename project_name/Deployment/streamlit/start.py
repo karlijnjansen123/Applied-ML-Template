@@ -3,6 +3,7 @@
 import streamlit as st
 import json
 import requests
+from streamlit_postprocessing import output_model_streamlit, features_postprocessing
 
 st.title("Let AI predict your:")
 st.subheader("Sleep 💤")
@@ -10,7 +11,9 @@ st.subheader("Mental health 🧠")
 st.subheader("Body image 🪞")
 
 st.subheader("And get to know yourself better! 📈")
-st.write("This AI is trained for children between 11 and 15. Use under supervision of a healthcare provider.")
+st.write("This AI is trained for children between 11 and 15. This is not a diagnostic tool, but can be used to provide more insight in your lifestyle choices may influence your physical and mental welbeing")
+st.write( " Use under supervision of a healthcare provider.")
+
 st.write("  \n")
 st.subheader("To make a prediction, please answer these questions first:")
 st.write("What is your weight?")
@@ -374,5 +377,20 @@ inputs = {"bodyweight": Q1, "bodyheight": Q2, "emcsocmed_sum": Q3, "nervous": Q4
 
 if st.button("Predict"):
     res = requests.post(url = "http://127.0.0.1:8000/predict_with_shap", data = json.dumps(inputs))
-    st.subheader(f"Models' response: {res.text}")
+    data = res.json()
+    #get the labels and the features right
+    bodyimage_label, feelinglow_label, sleepdiff_label, features_body, features_feelow,features_sleep = output_model_streamlit(data)
+    output_body,output_feelow,output_sleep = features_postprocessing(features_body,features_feelow,features_sleep)
+    st.subheader(f"Models' response:")
+    st.subheader(f"Your prediction on what you think of you body image: {bodyimage_label}")
+    st.text("The lifestyle choices contributing to this prediction are:")
+    st.text(f"1.{output_body[0]}\n 2.{output_body[1]},\n 3.{output_body[2]}")
+    st.subheader(f"Your prediction on how often you're feeling low: {feelinglow_label}")
+    st.text("The lifestyle choices contributing to this prediction are:")
+    st.text(f"1.{output_feelow[0]}\n 2.{output_feelow[1]},\n 3.{output_feelow[2]}")
+    st.subheader(f"Your prediction on how often you're experiencing sleep difficulties:{sleepdiff_label} ")
+    st.text("The lifestyle choices contributing to this prediction are:")
+    st.text(f"1.{output_sleep[0]}\n 2.{output_sleep[1]},\n 3.{output_sleep[2]}")
+
+
 
