@@ -1,8 +1,10 @@
+from datetime import datetime
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from focal_loss import SparseCategoricalFocalLoss
 import joblib
+import os
 
 
 def test_train_split(X, Y1, Y2, Y3):
@@ -57,6 +59,10 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     the scalar, and final validation accuracy for each output
     """
 
+    # Create Tensorboard callback, create a log directory for every training, pass the tensor_board callback throught fit()
+    log_directory = os.path.join("logs", datetime.now().strftime("%Y%m%d-%H%M%S"))
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_directory, histogram_freq = 1)
+
     # Normalisation of the x-features
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
@@ -97,11 +103,12 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
             'sleep_difficulty': tf.keras.metrics.SparseCategoricalAccuracy()
         }
     )
+
     history = model.fit(X_train, {
         'think_body': Y1_train - 1,  # Make it a 0-based index
         'feeling_low': Y2_train - 1,
         'sleep_difficulty': Y3_train - 1
-    }, epochs=10, batch_size=32, validation_split=0.2)
+    }, epochs=3, batch_size=32, validation_split=0.2,callbacks = [tensorboard_callback])
 
     # Extract the latest validation accuracies from history
     val_accuracy_thinkbody = history.history[
