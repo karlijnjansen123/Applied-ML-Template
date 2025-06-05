@@ -27,10 +27,11 @@ across the world, aged 11, 13, and 15 years old. It contains responses to a self
 
 ## Deployment
 ### Requirements 
+# TODO explain venv creation + activation
 Before running the API, navigate the path to the root directory using the **'Folder Structure'** defined below, and 
 install the requirements via the terminal:
 
-`pip install  -r project_name/requirements`
+`pip install  -r project_name/requirements.txt`
 
 ### Run the API
 To start the API, navigate to the root directory of the project and run in the terminal: 
@@ -40,6 +41,8 @@ To start the API, navigate to the root directory of the project and run in the t
 This will start the FastAPI server at: 
 
 `htttp://127.0.0.1:8000`
+
+# TODO: add streamlit demo startup instructions
 
 ### Send a request
 There are two ways to send a request to the API:
@@ -89,7 +92,7 @@ curl -X 'POST' \
 }
 
 ### Folder Structure 
-
+# TODO: add some information about files
 The path defined below depicts all the folders, but not all the files (which would be too crowded).
 
 Applied-ML-Template/<br>
@@ -246,6 +249,7 @@ predictions than just picking the most common class. This performance suggests t
 | 2 | Sleep Difficulty | 0.491                      | 0.543                                | True            |
 
 #### Limitations 
+# TODO update current limitations
 There are some limitations that could affect the generalizability and performance of the model:
 - The model relies on self-reported questionnaire responses which could introduce biases. 
 - The target classes are imbalanced, and apart from using Focal loss no other methods were used to mitigate this. 
