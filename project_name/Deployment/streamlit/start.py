@@ -383,13 +383,13 @@ if st.button("Predict"):
     output_body,output_feelow,output_sleep = features_postprocessing(features_body,features_feelow,features_sleep)
     st.subheader(f"Models' response:")
     st.subheader(f"Your prediction on what you think of you body image: {bodyimage_label}")
-    st.text("The lifestyle choices contributing to this prediction are:")
+    st.text("The factors  contributing to this prediction are:")
     st.text(f"1.{output_body[0]}\n 2.{output_body[1]},\n 3.{output_body[2]}")
     st.subheader(f"Your prediction on how often you're feeling low: {feelinglow_label}")
-    st.text("The lifestyle choices contributing to this prediction are:")
+    st.text("The factors  contributing to this prediction are:")
     st.text(f"1.{output_feelow[0]}\n 2.{output_feelow[1]},\n 3.{output_feelow[2]}")
     st.subheader(f"Your prediction on how often you're experiencing sleep difficulties:{sleepdiff_label} ")
-    st.text("The lifestyle choices contributing to this prediction are:")
+    st.text("The factors contributing to this prediction are:")
     st.text(f"1.{output_sleep[0]}\n 2.{output_sleep[1]},\n 3.{output_sleep[2]}")
 
 
