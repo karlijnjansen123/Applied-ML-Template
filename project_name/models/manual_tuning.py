@@ -39,45 +39,84 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Build model with fixed values. Use to train with different learning rates.
-def build_model_manual(learning_rate=0.001, units=64, num_layers=2, activation='relu'):
+# Build neural network model
+def build_model_manual(learning_rate=0.001, units=64, num_layers=2, optimizer='adam'):
     inputs = tf.keras.Input(shape=(X_train.shape[1],))
     x = inputs
     for _ in range(num_layers):
-        x = tf.keras.layers.Dense(units, activation=activation)(x)
+        x = tf.keras.layers.Dense(units, activation='relu')(x)
     outputs = tf.keras.layers.Dense(5, activation='softmax')(x)
+
+    if optimizer == 'adam':
+        opt = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+    else:
+        opt = tf.keras.optimizers.SGD(learning_rate=learning_rate)
 
     model = tf.keras.Model(inputs=inputs, outputs=outputs)
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
+        optimizer=opt,
         loss=tf.keras.losses.SparseCategoricalCrossentropy(),
         metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
     )
     return model
 
-# Manual learning rate tuning. Try out different values for the model with fixed other parameters
-learning_rates = [1e-4, 5e-4, 1e-3, 5e-3, 1e-2]
-val_accuracies = []
+# The hyperparameter settings with their varied values
+varied_hyperparameters = {
+    "learning_rate": [1e-4, 5e-4, 1e-3, 5e-3, 1e-2],
+    "units": [16, 32, 64, 128],
+    "num_layers": [2, 3, 4, 5],
+    "optimizer": ["adam", "sgd"]
+}
 
-for lr in learning_rates:
-    print(f"Training with learning rate: {lr}")
-    model = build_model_manual(learning_rate=lr)
-    history = model.fit(
-        X_train_scaled, y_train - 1,
-        validation_split=0.2,
-        epochs=5,
-        batch_size=32,
-        verbose=0
-    )
-    val_acc = history.history['val_sparse_categorical_accuracy'][-1]
-    val_accuracies.append(val_acc)
+# Run the model with each hyperparameter individually while fixing all others
+fixed_parameters = {
+    "learning_rate": 0.001,
+    "units": 64,
+    "num_layers": 2,
+    "optimizer": "adam"
+}
 
-# Plotting the result of learning rate versus validation accuracy
-plt.plot(learning_rates, val_accuracies, marker='o')
-plt.xscale('log')
-plt.xlabel("Learning Rate")
-plt.ylabel("Validation Accuracy")
-plt.title("Learning Rate Tuning")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
+# Go through each combination of fixed hyperparameter with varied options
+for param_name, values in varied_hyperparameters.items():
+    print(f"\nTuning {param_name}...")
+    val_accuracies = []
+    for value in values:
+        params = fixed_parameters.copy()
+        params[param_name] = value
+        print(f"Training with {param_name} = {value}")
+        model = build_model_manual(
+            learning_rate=params["learning_rate"],
+            units=params["units"],
+            num_layers=params["num_layers"],
+            optimizer=params["optimizer"]
+        )
+        history = model.fit(
+            X_train_scaled, y_train - 1,
+            validation_split=0.2,
+            epochs=5,
+            batch_size=32,
+            verbose=0
+        )
+        val_acc = history.history['val_sparse_categorical_accuracy'][-1]
+        val_accuracies.append(val_acc)
+
+    # Plot result for each hyperparameter
+    plt.figure()
+    plt.plot(values, val_accuracies, marker='o')
+    if param_name == "learning_rate":
+        plt.xscale('log')
+    plt.xlabel(param_name.replace("_", " ").title()) # replace the _
+    plt.ylabel("Validation Accuracy")
+    plt.title(f"Tuning {param_name}")
+    plt.grid(True)
+    plt.tight_layout()
+
+    # Save plot to "Plots manual tuning" folder
+    plot_dir = os.path.join(os.path.dirname(__file__), "Plots manual tuning")
+    os.makedirs(plot_dir, exist_ok=True)
+    plot_path = os.path.join(plot_dir, f"tuning_{param_name}.png")
+    plt.savefig(plot_path)
+    print(f"Saved plot: {plot_path}")
+
+    # Show plots (not necessary, as you save the plots)
+    plt.show()
