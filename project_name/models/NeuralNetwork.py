@@ -6,7 +6,7 @@ import joblib
 from sklearn.metrics import f1_score, roc_auc_score
 import numpy as np
 import os
-import datetime
+from datetime import datetime
 
 def test_train_split(X, Y1, Y2, Y3):
     """
@@ -65,9 +65,9 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
 
     # Model Architecture
     inp = tf.keras.Input(shape=(size_input,))
-    hidden1 = tf.keras.layers.Dense(64, activation='relu')(inp)
-    hidden2 = tf.keras.layers.Dense(64, activation='relu')(hidden1)
-    hidden3 = tf.keras.layers.Dense(32, activation='relu')(hidden2)
+    hidden1 = tf.keras.layers.Dense(32, activation='relu')(inp)
+    hidden2 = tf.keras.layers.Dense(32, activation='relu')(hidden1)
+    hidden3 = tf.keras.layers.Dense(64, activation='relu')(hidden2)
 
     out1 = tf.keras.layers.Dense(5, activation='softmax', name='think_body')(hidden3)
     out2 = tf.keras.layers.Dense(5, activation='softmax', name='feeling_low')(hidden3)
