@@ -5,6 +5,8 @@ from focal_loss import SparseCategoricalFocalLoss
 import joblib
 from sklearn.metrics import f1_score, roc_auc_score
 import numpy as np
+import os
+import datetime
 
 def test_train_split(X, Y1, Y2, Y3):
     """
@@ -55,7 +57,11 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
+    #save the scalar
     joblib.dump(scaler, "./project_name/Deployment/scaler.pkl")
+    #tensorboard
+    log_directory = os.path.join("logs", datetime.now().strftime("%Y%m%d-%H%M%S"))
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_directory, histogram_freq = 1)
 
     # Model Architecture
     inp = tf.keras.Input(shape=(size_input,))
@@ -98,7 +104,7 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
         epochs=20,
         batch_size=32,
         validation_split=0.2,
-        callbacks=[early_stopping]
+        callbacks=[early_stopping, tensorboard_callback]
     )
 
     # Validation Metrics from History
