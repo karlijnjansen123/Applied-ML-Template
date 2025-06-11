@@ -153,25 +153,32 @@ print("Accuracy for Sleep Difficulty:", acc)
  Y2_test, Y3_train, Y3_test) = test_train_split(
     X, Y1, Y2, Y3
 )
-# run NN
 (neural_network, X_train, X_test, scaler,
- val_acc1, val_acc2, val_acc3) = build_neural_network(
+ val_acc1, val_acc2, val_acc3,
+ metrics_dict) = build_neural_network(
     X_train, X_test,
     Y1_train, Y1_test,
     Y2_train, Y2_test,
     Y3_train, Y3_test,
     size_input
 )
+
 print(type(neural_network))
+
+print("\n=== Neural Network Validation Metrics ===")
+print(f"Think Body - Val Accuracy: {val_acc1:.3f}, F1: {metrics_dict['think_body']['f1_score']:.3f}, AUC: {metrics_dict['think_body']['auc_score']:.3f}")
+print(f"Feeling Low - Val Accuracy: {val_acc2:.3f}, F1: {metrics_dict['feeling_low']['f1_score']:.3f}, AUC: {metrics_dict['feeling_low']['auc_score']:.3f}")
+print(f"Sleep Difficulty - Val Accuracy: {val_acc3:.3f}, F1: {metrics_dict['sleep_difficulty']['f1_score']:.3f}, AUC: {metrics_dict['sleep_difficulty']['auc_score']:.3f}")
+
 # X_train.sample(10000, random_state=42)
 # .to_csv("shap_background.csv", index=False)
 
 # normal shap graph - overall importance
-NN_shap_graphs(
-    neural_network,
-    X_train,
-    column_names
- )
+#NN_shap_graphs(
+#    neural_network,
+#    X_train,
+#    column_names
+# )
 
 # averaged shap graph over 5 model trainings - overall importance
 # averaged_NN_shap_graphs(build_neural_network, X_train,
