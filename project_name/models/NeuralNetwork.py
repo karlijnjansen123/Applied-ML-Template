@@ -107,17 +107,17 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
         loss={
             'think_body':
                 SparseCategoricalFocalLoss(
-                    gamma=1,
+                    gamma=5,
                     class_weight=y1_weights
                 ),
             'feeling_low':
                 SparseCategoricalFocalLoss(
-                    gamma=1,
+                    gamma=5,
                     class_weight=y2_weights
                 ),
             'sleep_difficulty':
                 SparseCategoricalFocalLoss(
-                    gamma=1,
+                    gamma=5,
                     class_weight=y3_weights
                 )
         },
