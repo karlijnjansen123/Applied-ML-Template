@@ -3,6 +3,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, f1_score
 
+
 def KNN_solver(X, y, scoring='accuracy', plot=True):
     """
     Function that trains K-Nearest Neighbors model and evaluates performance
