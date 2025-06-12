@@ -9,6 +9,7 @@ from project_name.data.preprocessing import preprocess_hbsc_data
 from project_name.models.NeuralNetwork import test_train_split
 import shutil
 
+
 shutil.rmtree(os.path.join("grid_tuning", "multi_output_nn"), ignore_errors=True)
 
 base_dir = os.path.dirname(os.path.dirname(__file__))  # Adjusted for relative structure
@@ -58,6 +59,7 @@ joblib.dump(scaler, os.path.join(deployment_dir, "scaler.pkl"))
 
 input_dim = X_train_scaled.shape[1]
 
+
 # Neural network model
 def build_model(hp):
 
@@ -68,7 +70,7 @@ def build_model(hp):
     x = inp
     for i in range(hp.Int("num_layers", 2, 3)):
         x = tf.keras.layers.Dense(
-            units=hp.Choice(f"units_{i}", [32, 64]),
+            units=hp.Choice(f"units_{i}", [16, 32, 64]),
             activation='relu',
             kernel_initializer='glorot_uniform'  # Explicit random init, aligns with NN.py
         )(x)
@@ -81,13 +83,9 @@ def build_model(hp):
     # Build model
     model = tf.keras.Model(inputs=inp, outputs=[out1, out2, out3])
 
-    # Optimizer and learning rates choice
-    optimizer_choice = hp.Choice("optimizer", ["adam", "sgd"])
-    learning_rate = hp.Choice("learning_rate", [1e-2, 1e-3, 1e-4])
-    if optimizer_choice == "adam":
-        optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-    else:
-        optimizer = tf.keras.optimizers.SGD(learning_rate=learning_rate)
+    # Optimizer and learning rate choice
+    learning_rate = hp.Choice("learning_rate", [1e-3, 1e-4])
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
     # Compile model
     model.compile(
@@ -106,6 +104,7 @@ def build_model(hp):
 
     return model
 
+
 # GridSearch Tuner from Keras
 tuner = kt.GridSearch(
     hypermodel=build_model,
@@ -121,7 +120,7 @@ tuner.search(
     X_train_scaled,
     {"think_body": Y1_train - 1, "feeling_low": Y2_train - 1, "sleep_difficulty": Y3_train - 1},
     validation_split=0.2,
-    epochs=3,
+    epochs=2,
     batch_size=32,
     verbose=1
 )

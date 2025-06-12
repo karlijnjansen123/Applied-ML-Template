@@ -99,7 +99,25 @@ print(clean_data.head())
 # "IRRELFAS_LMH", "IOTF4", "oweight_who"]]
 
 # corresponding column names:
-# column_names = ["emcsocmed_sum", "fasfamcar", "fasbedroom", "fascomputers", "fasbathroom", "fasdishwash", "fasholidays", "health", "lifesat", "headache", "stomachache", "backache", "irritable", "nervous", "dizzy", "physact60", "breakfastwd", "breakfastwe", "fruits_2", "vegetables_2", "sweets_2", "softdrinks_2", "fmeal", "toothbr", "timeexe", "smokltm", "smok30d_2", "alcltm", "alc30d_2", "drunkltm", "drunk30d", "cannabisltm_2", "cannabis30d_2", "bodyweight", "bodyheight", "likeschool", "schoolpressure", "studtogether", "studhelpful", "studaccept", "teacheraccept", "teachercare", "teachertrust", "bulliedothers", "beenbullied", "cbulliedothers", "cbeenbullied", "fight12m", "injured12m", "friendhelp", "friendcounton", "friendshare", "friendtalk", "hadsex", "agesex", "contraceptcondom", "contraceptpill", "motherhome1", "fatherhome1", "stepmohome1", "stepfahome1", "fosterhome1", "elsehome1_2", "employfa", "employmo", "employnotfa", "employnotmo", "talkfather", "talkmother", "talkstepmo", "famhelp", "famsup", "famtalk", "famdec", "MBMI", "IRFAS", "IRRELFAS_LMH", "IOTF4", "oweight_who"]
+# column_names = [
+#     "emcsocmed_sum", "fasfamcar", "fasbedroom", "fascomputers", "fasbathroom",
+#     "fasdishwash", "fasholidays", "health", "lifesat", "headache",
+#     "stomachache", "backache", "irritable", "nervous", "dizzy",
+#     "physact60", "breakfastwd", "breakfastwe", "fruits_2", "vegetables_2",
+#     "sweets_2", "softdrinks_2", "fmeal", "toothbr", "timeexe",
+#     "smokltm", "smok30d_2", "alcltm", "alc30d_2", "drunkltm",
+#     "drunk30d", "cannabisltm_2", "cannabis30d_2", "bodyweight", "bodyheight",
+#     "likeschool", "schoolpressure", "studtogether", "studhelpful", "studaccept",
+#     "teacheraccept", "teachercare", "teachertrust", "bulliedothers", "beenbullied",
+#     "cbulliedothers", "cbeenbullied", "fight12m", "injured12m", "friendhelp",
+#     "friendcounton", "friendshare", "friendtalk", "hadsex", "agesex",
+#     "contraceptcondom", "contraceptpill", "motherhome1", "fatherhome1",
+#     "stepmohome1", "stepfahome1", "fosterhome1",
+#     "elsehome1_2", "employfa", "employmo", "employnotfa",
+#     "employnotmo", "talkfather", "talkmother", "talkstepmo",
+#     "famhelp", "famsup", "famtalk", "famdec", "MBMI",
+#     "IRFAS", "IRRELFAS_LMH", "IOTF4", "oweight_who"
+# ]
 
 # most important X
 X = clean_data[["bodyweight", "bodyheight", "emcsocmed_sum",
@@ -166,15 +184,27 @@ print("Accuracy for Sleep Difficulty:", acc)
 print(type(neural_network))
 
 print("\n=== Neural Network Validation Metrics ===")
-print(f"Think Body - Val Accuracy: {val_acc1:.3f}, F1: {metrics_dict['think_body']['f1_score']:.3f}, AUC: {metrics_dict['think_body']['auc_score']:.3f}")
-print(f"Feeling Low - Val Accuracy: {val_acc2:.3f}, F1: {metrics_dict['feeling_low']['f1_score']:.3f}, AUC: {metrics_dict['feeling_low']['auc_score']:.3f}")
-print(f"Sleep Difficulty - Val Accuracy: {val_acc3:.3f}, F1: {metrics_dict['sleep_difficulty']['f1_score']:.3f}, AUC: {metrics_dict['sleep_difficulty']['auc_score']:.3f}")
+print(
+    f"Think Body - Val Accuracy: {val_acc1:.3f}, "
+    f"F1: {metrics_dict['think_body']['f1_score']:.3f}, "
+    f"AUC: {metrics_dict['think_body']['auc_score']:.3f}"
+)
+print(
+    f"Feeling Low - Val Accuracy: {val_acc2:.3f}, "
+    f"F1: {metrics_dict['feeling_low']['f1_score']:.3f}, "
+    f"AUC: {metrics_dict['feeling_low']['auc_score']:.3f}"
+)
+print(
+    f"Sleep Difficulty - Val Accuracy: {val_acc3:.3f}, "
+    f"F1: {metrics_dict['sleep_difficulty']['f1_score']:.3f}, "
+    f"AUC: {metrics_dict['sleep_difficulty']['auc_score']:.3f}"
+)
 
 # X_train.sample(10000, random_state=42)
 # .to_csv("shap_background.csv", index=False)
 
 # normal shap graph - overall importance
-#NN_shap_graphs(
+# NN_shap_graphs(
 #    neural_network,
 #    X_train,
 #    column_names
@@ -193,6 +223,7 @@ averaged_NN_shap_graphs_per_output(
 )
 # comparing to random guessing
 
+
 # Compute the random baseline per target
 def compute_majority_baseline(y, label: str = ""):
     counter = Counter(y)
@@ -201,6 +232,7 @@ def compute_majority_baseline(y, label: str = ""):
     print(f"Majority class for {label}: {most_common_class}")
     print(f"Baseline accuracy for {label}: {baseline_accuracy:.3f}")
     return most_common_class, baseline_accuracy
+
 
 # Baseline evaluation
 randomguessing_bodyimage = (compute_majority_baseline

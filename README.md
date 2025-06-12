@@ -234,22 +234,24 @@ assess performance per task
 The multitask learning neural network outperformed the three separate KNN-models, demonstrating the effectiveness 
 of the shared representations across the three targets outputs. 
 To support this performance, we compared the model against a majority baseline to verify that it evaluates better than random guessing. 
-This baseline predicts the most frequent class for each target variable and is a more realistic benchmark than random guessing, especially in presence of class imbalance. 
+This baseline predicts the most frequent class for each target variable and is a more realistic benchmark than random guessing, 
+especially in presence of class imbalance. 
 For each of the tree targets(Body Image, Feeling Low, Sleep Difficulty), the majority class was identified and the proportion of samples in that class was used 
 as the baseline accuracy. 
 
 The model's validation accuracy on each target was then compared to the respective majority baseline (see table). 
 In all three cases, the validation accuracy exceeded the baseline, this shows that the model learned useful patterns and made better 
 predictions than just picking the most common class. This performance suggests that the model works well, even with imbalanced classes.
+Additionally, the comparison with the KNN baseline is also represented in the table below. 
 
-|   | Target           | Majority Baseline Accuracy | Validation Accuracy (Neural Network) | Above Baseline? |
-|---|------------------|----------------------------|--------------------------------------|-----------------|
-| 0 | Body Image       | 0.56                       | 0.589                                | True            |
-| 1 | Feeling Low      | 0.473                      | 0.543                                | True            |
-| 2 | Sleep Difficulty | 0.491                      | 0.543                                | True            |
+|   | Target           | Majority Baseline Accuracy | KNN Baseline Accuracy | Validation Accuracy (Neural Network) | Above Baseline? |
+|---|------------------|----------------------------|-----------------------|--------------------------------------|-----------------|
+| 0 | Body Image       | 0.56                       | 0.480                 | 0.593                                | True            |
+| 1 | Feeling Low      | 0.473                      | 0.458                 | 0.544                                | True            |
+| 2 | Sleep Difficulty | 0.491                      | 0.412                 | 0.526                                 | True            |
 
-#### Limitations 
-# TODO update current limitations
+
+#### Limitations -> TODO update current
 There are some limitations that could affect the generalizability and performance of the model:
 - The model relies on self-reported questionnaire responses which could introduce biases. 
 - The target classes are imbalanced, and apart from using Focal loss no other methods were used to mitigate this. 

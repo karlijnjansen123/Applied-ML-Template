@@ -6,8 +6,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from project_name.data.preprocessing import preprocess_hbsc_data
 
+
 # Load data
-base_dir = os.path.dirname(os.path.dirname(__file__))
+base_dir = os.path.dirname(os.path.dirname(_file_))
 data_path = os.path.join(base_dir, "data", "HBSC2018.csv")
 
 # Get the input and output
@@ -39,6 +40,7 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
+
 # Build neural network model
 def build_model_manual(learning_rate=0.001, units=64, num_layers=2, optimizer='adam'):
     inputs = tf.keras.Input(shape=(X_train.shape[1],))
@@ -60,11 +62,12 @@ def build_model_manual(learning_rate=0.001, units=64, num_layers=2, optimizer='a
     )
     return model
 
+
 # The hyperparameter settings with their varied values
 varied_hyperparameters = {
     "learning_rate": [1e-4, 5e-4, 1e-3, 5e-3, 1e-2],
-    "units": [16, 32, 64, 128],
-    "num_layers": [2, 3, 4, 5],
+    "units": [8, 16, 32, 64],
+    "num_layers": [2, 3, 4],
     "optimizer": ["adam", "sgd"]
 }
 
@@ -105,18 +108,15 @@ for param_name, values in varied_hyperparameters.items():
     plt.plot(values, val_accuracies, marker='o')
     if param_name == "learning_rate":
         plt.xscale('log')
-    plt.xlabel(param_name.replace("_", " ").title()) # replace the _
+    plt.xlabel(param_name.replace("_", " ").title())  # replace the _
     plt.ylabel("Validation Accuracy")
     plt.title(f"Tuning {param_name}")
     plt.grid(True)
     plt.tight_layout()
 
     # Save plot to "Plots manual tuning" folder
-    plot_dir = os.path.join(os.path.dirname(__file__), "Plots manual tuning")
+    plot_dir = os.path.join(os.path.dirname(_file_), "Plots manual tuning")
     os.makedirs(plot_dir, exist_ok=True)
     plot_path = os.path.join(plot_dir, f"tuning_{param_name}.png")
     plt.savefig(plot_path)
     print(f"Saved plot: {plot_path}")
-
-    # Show plots (not necessary, as you save the plots)
-    plt.show()
