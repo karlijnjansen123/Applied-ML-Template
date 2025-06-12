@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from project_name.data.preprocessing import preprocess_hbsc_data
 
+
 # Load data
 base_dir = os.path.dirname(os.path.dirname(_file_))
 data_path = os.path.join(base_dir, "data", "HBSC2018.csv")
@@ -39,6 +40,7 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
+
 # Build neural network model
 def build_model_manual(learning_rate=0.001, units=64, num_layers=2, optimizer='adam'):
     inputs = tf.keras.Input(shape=(X_train.shape[1],))
@@ -59,6 +61,7 @@ def build_model_manual(learning_rate=0.001, units=64, num_layers=2, optimizer='a
         metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
     )
     return model
+
 
 # The hyperparameter settings with their varied values
 varied_hyperparameters = {
@@ -105,7 +108,7 @@ for param_name, values in varied_hyperparameters.items():
     plt.plot(values, val_accuracies, marker='o')
     if param_name == "learning_rate":
         plt.xscale('log')
-    plt.xlabel(param_name.replace("_", " ").title()) # replace the _
+    plt.xlabel(param_name.replace("_", " ").title())  # replace the _
     plt.ylabel("Validation Accuracy")
     plt.title(f"Tuning {param_name}")
     plt.grid(True)

@@ -8,6 +8,7 @@ import numpy as np
 import os
 from datetime import datetime
 
+
 def test_train_split(X, Y1, Y2, Y3):
     """
     Function to split feature and target data into training and testing sets
@@ -44,8 +45,6 @@ def test_train_split(X, Y1, Y2, Y3):
             Y3_train, Y3_test)
 
 
-
-
 def build_neural_network(X_train, X_test, Y1_train, Y1_test,
                          Y2_train, Y2_test, Y3_train, Y3_test,
                          size_input):
@@ -57,11 +56,11 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-    #save the scalar
+    # save the scalar
     joblib.dump(scaler, "./project_name/Deployment/scaler.pkl")
-    #tensorboard
+    # tensorboard
     log_directory = os.path.join("logs", datetime.now().strftime("%Y%m%d-%H%M%S"))
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_directory, histogram_freq = 1)
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_directory, histogram_freq=1)
 
     # Model Architecture
     inp = tf.keras.Input(shape=(size_input,))

@@ -9,6 +9,7 @@ from project_name.data.preprocessing import preprocess_hbsc_data
 from project_name.models.NeuralNetwork import test_train_split
 import shutil
 
+
 shutil.rmtree(os.path.join("grid_tuning", "multi_output_nn"), ignore_errors=True)
 
 base_dir = os.path.dirname(os.path.dirname(__file__))  # Adjusted for relative structure
@@ -58,6 +59,7 @@ joblib.dump(scaler, os.path.join(deployment_dir, "scaler.pkl"))
 
 input_dim = X_train_scaled.shape[1]
 
+
 # Neural network model
 def build_model(hp):
 
@@ -101,6 +103,7 @@ def build_model(hp):
     )
 
     return model
+
 
 # GridSearch Tuner from Keras
 tuner = kt.GridSearch(

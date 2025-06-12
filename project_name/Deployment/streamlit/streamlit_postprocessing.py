@@ -1,13 +1,13 @@
 
 
-dict_features_change = {"bodyweight":"Your weight",
+dict_features_change = {"bodyweight": "Your weight",
                         "bodyheight": "Your length",
                         "emcsocmed_sum": "Your social media use",
-                        "nervous":"How often you're feeling nervous",
+                        "nervous": "How often you're feeling nervous",
                         "irritable": "How often your feeling irritable",
-                        "lifesat" : "How satisfied you are with your life right now",
-                        "breakfastwd":"How often you have breakfast",
-                        "health":"How you rated your own health",
+                        "lifesat": "How satisfied you are with your life right now",
+                        "breakfastwd": "How often you have breakfast",
+                        "health": "How you rated your own health",
                         "fruits_2": "How many times a week you eat fruits",
                         "headache": "How often your experiencing headaches",
                         "fight12m": "How many physical fights you've been in in the 12 months",
@@ -18,8 +18,8 @@ dict_features_change = {"bodyweight":"Your weight",
                         "friendhelp": "If you think you're friends really try to help you"}
 
 
-def features_postprocessing(features_bodyimage,features_feelinglow,features_sleep):
-    features_body_list  = features_bodyimage.split(",")
+def features_postprocessing(features_bodyimage, features_feelinglow, features_sleep):
+    features_body_list = features_bodyimage.split(",")
     features_feelow_list = features_feelinglow.split(",")
     features_sleep_list = features_sleep.split(",")
     body_output = []
@@ -36,13 +36,6 @@ def features_postprocessing(features_bodyimage,features_feelinglow,features_slee
     return body_output, feelow_output, sleep_output
 
 
-
-
-
-
-
-
-
 def output_model_streamlit(text):
     predictions_dict = text["predictions"]
 
@@ -51,13 +44,13 @@ def output_model_streamlit(text):
     features_feelinglow = predictions_dict["Top features attributing to feelinglow prediction"]
     features_sleepdiff = predictions_dict["Top features attributing to sleep prediction"]
 
-    #Getting the predictions for the output labels
+    # Getting the predictions for the output labels
     label_bodyimage = predictions_dict["Prediction for body image"]
     label_feelinglow = predictions_dict["Prediction at feeling low"]
     label_sleepdiff = predictions_dict["Prediction at sleep difficulties"]
 
-    #return variables to print in the streamlit application
+    # Return variables to print in the streamlit application
     body_image = f"Your prediction on what you think of you body image: {label_bodyimage}, the lifestyle choices contributing to this prediction: {features_bodyimage}."
-    feelinglow  =  f"Your prediction on how often you're feeling low: {label_feelinglow}, the lifestyle choices contributing to this prediction: {features_feelinglow}."
-    sleepdiff =  f"Your prediction on how often you're experiencing sleep difficulties: {label_sleepdiff}, the lifestyle choices contributing to this prediction: {features_sleepdiff}."
-    return label_bodyimage,label_feelinglow,label_sleepdiff,features_bodyimage,features_feelinglow,features_sleepdiff
+    feelinglow = f"Your prediction on how often you're feeling low: {label_feelinglow}, the lifestyle choices contributing to this prediction: {features_feelinglow}."
+    sleepdiff = f"Your prediction on how often you're experiencing sleep difficulties: {label_sleepdiff}, the lifestyle choices contributing to this prediction: {features_sleepdiff}."
+    return label_bodyimage, label_feelinglow, label_sleepdiff, features_bodyimage, features_feelinglow, features_sleepdiff

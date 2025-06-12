@@ -7,12 +7,12 @@ from streamlit_postprocessing import output_model_streamlit, features_postproces
 
 st.title("Let AI predict your:")
 st.subheader("Sleep 💤")
-st.subheader("Mental health 🧠") 
+st.subheader("Mental health 🧠")
 st.subheader("Body image 🪞")
 
 st.subheader("And get to know yourself better! 📈")
 st.write("This AI is trained for children between 11 and 15. This is not a diagnostic tool, but can be used to provide more insight in your lifestyle choices may influence your physical and mental welbeing")
-st.write( " Use under supervision of a healthcare provider.")
+st.write(" Use under supervision of a healthcare provider.")
 
 st.write("  \n")
 st.subheader("To make a prediction, please answer these questions first:")
@@ -51,7 +51,7 @@ if yes4:
 else:
     numerical_value += 1
 st.write("  \n")
-st.write("I regularly neglected other activities (e.g hobbies, sport) because I wanted to use social media") 
+st.write("I regularly neglected other activities (e.g hobbies, sport) because I wanted to use social media")
 yes5 = st.checkbox("Agree", key="agree_q5")
 if yes5:
     numerical_value += 2
@@ -90,7 +90,7 @@ Q3 = int(numerical_value)
 
 
 q4_frequency = st.select_slider(
-    "Select how often in the last 6 months you were feeling nervous:", 
+    "Select how often in the last 6 months you were feeling nervous:",
     options=[
         "about every day",
         "more than once day",
@@ -111,7 +111,7 @@ if q4_frequency == "rarely or never":
 Q4 = int(q4)
 
 q5_frequency = st.select_slider(
-    "Select how often in the last 6 months you were feeling irritable:", 
+    "Select how often in the last 6 months you were feeling irritable:",
     options=[
         "about every day",
         "more than once day",
@@ -131,8 +131,8 @@ if q5_frequency == "rarely or never":
     q5 = 5
 Q5 = int(q5)
 
-q6_frequency = st.select_slider("Select where you feel like you are on this scale (in general)", options = ["0: the worst possible life for me", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10: the best possible life for me"])
-  
+q6_frequency = st.select_slider("Select where you feel like you are on this scale (in general)", options=["0: the worst possible life for me", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10: the best possible life for me"])
+
 if q6_frequency == "0: the worst possible life for me":
     q6 = 0
 if q6_frequency == "1":
@@ -160,13 +160,15 @@ Q6 = int(q6)
 q7_frequency = int(st.slider("From Monday - Friday, how many days do you have breakfast (more than a glass of milk or juice)?", 0, 5, 1))
 Q7 = int(q7_frequency + 1)
 
-q8_value = st.select_slider("In general, would you say your health is...", 
-                      options=[
-                          "Excellent",
-                          "Good",
-                          "Fair",
-                          "Poor"
-                      ])
+q8_value = st.select_slider(
+    "In general, would you say your health is...",
+    options=[
+        "Excellent",
+        "Good",
+        "Fair",
+        "Poor"
+    ]
+)
 if q8_value == "Excellent":
     q8 = 1
 if q8_value == "Good":
@@ -177,16 +179,18 @@ if q8_value == "Poor":
     q8 = 4
 Q8 = int(q8)
 
-q9_value = st.select_slider("How often a week do you eat fruits?", 
-                      options=[
-                          "Never", 
-                          "Less than once a week",
-                          "Once a week",
-                          "2-4 days a week",
-                          "5-6 days a week",
-                          "Once a day",
-                          "More than once a day"
-                      ])
+q9_value = st.select_slider(
+    "How often a week do you eat fruits?",
+    options=[
+        "Never",
+        "Less than once a week",
+        "Once a week",
+        "2-4 days a week",
+        "5-6 days a week",
+        "Once a day",
+        "More than once a day"
+    ]
+)
 if q9_value == "Never":
     q9 = 1
 if q9_value == "Less than once a week":
@@ -200,12 +204,12 @@ if q9_value == "5-6 days a week":
 if q9_value == "Once a day":
     q9 = 6
 if q9_value == "More than once a day":
-    q9 =7
+    q9 = 7
 
 Q9 = int(q9)
 
 q10_frequency = st.select_slider(
-    "Select how often in the last 6 months you had a headache:", 
+    "Select how often in the last 6 months you had a headache:",
     options=[
         "about every day",
         "more than once day",
@@ -226,7 +230,7 @@ if q10_frequency == "rarely or never":
 Q10 = int(q10)
 
 q11_frequency = st.select_slider(
-    "During the past 12 months, how many times were you in a physical fight?", 
+    "During the past 12 months, how many times were you in a physical fight?",
     options=[
         "Never",
         "One time",
@@ -248,7 +252,7 @@ if q11_frequency == "4 times or more":
 Q11 = int(q11)
 
 q12_value = st.select_slider(
-    "How much do you agree with the statement: 'I can count on my friends when things go wrong'?", 
+    "How much do you agree with the statement: 'I can count on my friends when things go wrong'?",
     options=[
         "1: Very strongly disagree",
         "2",
@@ -275,7 +279,7 @@ if q12_value == "7: Very strongly agree":
 Q12 = int(q12)
 
 q13_frequency = st.select_slider(
-    "How many times a week do you usually drink coke or soft drinks?", 
+    "How many times a week do you usually drink coke or soft drinks?",
     options=[
         "Every day",
         "Most days",
@@ -297,7 +301,7 @@ if q13_frequency == "Never":
 Q13 = int(q13)
 
 q14_frequency = st.select_slider(
-    "Select how often in the last 6 months you felt dizzy:", 
+    "Select how often in the last 6 months you felt dizzy:",
     options=[
         "about every day",
         "more than once day",
@@ -317,17 +321,18 @@ if q14_frequency == "rarely or never":
     q14 = 5
 Q14 = int(q14)
 
-
-q15_value = st.select_slider("How often a week do you eat sweets or chocolate?", 
-                      options=[
-                          "Never", 
-                          "Less than once a week",
-                          "Once a week",
-                          "2-4 days a week",
-                          "5-6 days a week",
-                          "Once a day",
-                          "More than once a day"
-                      ])
+q15_value = st.select_slider(
+    "How often a week do you eat sweets or chocolate?",
+    options=[
+        "Never",
+        "Less than once a week",
+        "Once a week",
+        "2-4 days a week",
+        "5-6 days a week",
+        "Once a day",
+        "More than once a day"
+    ]
+)
 if q15_value == "Never":
     q15 = 1
 if q15_value == "Less than once a week":
@@ -346,7 +351,7 @@ if q15_value == "More than once a day":
 Q15 = int(q15)
 
 q16_value = st.select_slider(
-    "How much do you agree with the statement: 'My friends really try to help me'?", 
+    "How much do you agree with the statement: 'My friends really try to help me'?",
     options=[
         "1: Very strongly disagree",
         "2",
@@ -376,11 +381,11 @@ Q16 = int(q16)
 inputs = {"bodyweight": Q1, "bodyheight": Q2, "emcsocmed_sum": Q3, "nervous": Q4, "irritable": Q5, "lifesat": Q6, "breakfastwd": Q7, "health": Q8, "fruits_2": Q9, "headache": Q10, "fight12m": Q11, "friendcounton": Q12, "softdrinks_2": Q13, "dizzy": Q14, "sweets_2": Q15, "friendhelp": Q16}
 
 if st.button("Predict"):
-    res = requests.post(url = "http://127.0.0.1:8000/predict_with_shap", data = json.dumps(inputs))
+    res = requests.post(url="http://127.0.0.1:8000/predict_with_shap", data=json.dumps(inputs))
     data = res.json()
-    #get the labels and the features right
-    bodyimage_label, feelinglow_label, sleepdiff_label, features_body, features_feelow,features_sleep = output_model_streamlit(data)
-    output_body,output_feelow,output_sleep = features_postprocessing(features_body,features_feelow,features_sleep)
+    # Get the labels and the features right
+    bodyimage_label, feelinglow_label, sleepdiff_label, features_body, features_feelow, features_sleep = output_model_streamlit(data)
+    output_body, output_feelow, output_sleep = features_postprocessing(features_body, features_feelow, features_sleep)
     st.subheader(f"Models' response:")
     st.subheader(f"Your prediction on what you think of you body image: {bodyimage_label}")
     st.text("The factors  contributing to this prediction are:")
@@ -391,6 +396,3 @@ if st.button("Predict"):
     st.subheader(f"Your prediction on how often you're experiencing sleep difficulties:{sleepdiff_label} ")
     st.text("The factors contributing to this prediction are:")
     st.text(f"1.{output_sleep[0]}\n 2.{output_sleep[1]},\n 3.{output_sleep[2]}")
-
-
-
