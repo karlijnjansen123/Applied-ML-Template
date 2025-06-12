@@ -6,7 +6,7 @@ import joblib
 from sklearn.metrics import f1_score, roc_auc_score
 import numpy as np
 import os
-import datetime
+from datetime import datetime
 
 def test_train_split(X, Y1, Y2, Y3):
     """
@@ -20,9 +20,9 @@ def test_train_split(X, Y1, Y2, Y3):
     """
 
     # Print statements to check imbalanced classes
-    print(Y1.value_counts(normalize=True).round(3))
-    print(Y2.value_counts(normalize=True).round(3))
-    print(Y3.value_counts(normalize=True).round(3))
+    # print(Y1.value_counts(normalize=True).round(3))
+    # print(Y2.value_counts(normalize=True).round(3))
+    # print(Y3.value_counts(normalize=True).round(3))
 
     # Splitting in test and train data
     (
@@ -33,10 +33,10 @@ def test_train_split(X, Y1, Y2, Y3):
     ) = train_test_split(X, Y1, Y2, Y3, test_size=0.2)
 
     # Print statement for checking with and without using stratify
-    print('Class distribution for the train set of Y3')
-    print(Y1_train.value_counts(normalize=True).round(3))
-    print('Class distribution for the test set of Y3')
-    print(Y1_test.value_counts(normalize=True).round(3))
+    # print('Class distribution for the train set of Y3')
+    # print(Y1_train.value_counts(normalize=True).round(3))
+    # print('Class distribution for the test set of Y3')
+    # print(Y1_test.value_counts(normalize=True).round(3))
 
     return (X_train, X_test,
             Y1_train, Y1_test,

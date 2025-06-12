@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
 
-def KNN_solver(X, y, scoring='accuracy'):
+def KNN_solver(X, y, scoring='accuracy', plot=True):
     """
     Function that trains K-Nearest Neighbors model and evaluates performance
     using manual k tuning.
@@ -24,7 +24,8 @@ def KNN_solver(X, y, scoring='accuracy'):
     best_k = None
     best_score = 0
     scores = []
-    neighbors = [9, 19, 39, 49, 59, 69, 79, 99]
+    n_neighbors_max = min(100, len(X_train))  # 100, or less than training samples
+    neighbors = list(range(1, n_neighbors_max, 10))
 
     for k in neighbors:
         knn = KNeighborsClassifier(n_neighbors=k)
@@ -39,14 +40,15 @@ def KNN_solver(X, y, scoring='accuracy'):
     print(f"Best n_neighbors for '{y.name}': {best_k}")
 
     # Plot the test accuracy vs. n_neighbors
-    plt.figure(figsize=(8, 5))
-    plt.plot(neighbors, scores, marker='o')
-    plt.title("KNN Test Accuracy by n_neighbors")
-    plt.xlabel("n_neighbors")
-    plt.ylabel("Test Accuracy")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
+    if plot:
+        plt.figure(figsize=(8, 5))
+        plt.plot(neighbors, scores, marker='o')
+        plt.title("KNN Test Accuracy by n_neighbors")
+        plt.xlabel("n_neighbors")
+        plt.ylabel("Test Accuracy")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 
     # Store probability prediction
     predict_proba = best_knn.predict_proba
