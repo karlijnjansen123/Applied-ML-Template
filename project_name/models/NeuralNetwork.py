@@ -20,12 +20,6 @@ def test_train_split(X, Y1, Y2, Y3):
     :param Y3: Output variable for sleep difficulty
     :return: Train-test splits for X, Y1, Y2 and Y3
     """
-
-    # Print statements to check imbalanced classes
-    print(Y1.value_counts(normalize=True).round(3))
-    print(Y2.value_counts(normalize=True).round(3))
-    print(Y3.value_counts(normalize=True).round(3))
-
     # Splitting in test and train data
     (
         X_train, X_test,
@@ -33,12 +27,6 @@ def test_train_split(X, Y1, Y2, Y3):
         Y2_train, Y2_test,
         Y3_train, Y3_test
     ) = train_test_split(X, Y1, Y2, Y3, test_size=0.2)
-
-    # Print statement for checking with and without using stratify
-    print('Class distribution for the train set of Y3')
-    print(Y1_train.value_counts(normalize=True).round(3))
-    print('Class distribution for the test set of Y3')
-    print(Y1_test.value_counts(normalize=True).round(3))
 
     return (X_train, X_test,
             Y1_train, Y1_test,
@@ -64,16 +52,25 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
                          Y2_train, Y2_test, Y3_train, Y3_test,
                          size_input):
     """
-    Function to build, compile, train, and evaluate a multi-output
-    neural network using Rank 1 hyperparameters and early stopping.
+
+    :param X_train: train data set for X
+    :param X_test: test data set for X
+    :param Y1_train: train data set for Body image
+    :param Y1_test: test data set for Body image
+    :param Y2_train: train data set for Feeling Low
+    :param Y2_test: test data set for Feeling Low
+    :param Y3_train: train data set for Sleep Difficulties
+    :param Y3_test: test data set for Sleep Difficulties
+    :param size_input: amount of x-features
+    :return:
     """
     # Normalisation
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-    # save the scalar
+    # Save the scaler
     joblib.dump(scaler, "./project_name/Deployment/scaler.pkl")
-    # tensorboard
+    # Tensorboard implementation
     log_directory = os.path.join("logs", datetime.now().strftime(
         "%Y%m%d-%H%M%S"))
     tensorboard_callback = tf.keras.callbacks.TensorBoard(
@@ -81,8 +78,11 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
 
     # Calculating class weights
     y1_weights = compute_class_weights(Y1_train)
+    print(y1_weights, 'Weights for Body Image')
     y2_weights = compute_class_weights(Y2_train)
+    print(y2_weights, 'Weights for Feeling Low')
     y3_weights = compute_class_weights(Y3_train)
+    print(y3_weights, 'Weights for Sleep difficulties')
 
     # Model Architecture
     inp = tf.keras.Input(shape=(size_input,))
@@ -140,7 +140,7 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
             'feeling_low': Y2_train - 1,
             'sleep_difficulty': Y3_train - 1
         },
-        epochs=20,
+        epochs=10,
         batch_size=32,
         validation_split=0.2,
         callbacks=[early_stopping, tensorboard_callback]
