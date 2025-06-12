@@ -1,5 +1,4 @@
 import os
-from distutils.command.build import build
 import pandas as pd
 from tabulate import tabulate
 from project_name.data import preprocessing
@@ -150,7 +149,10 @@ print(
 )
 
 
-# The following comments are for feature importance
+# To calculate feature importance, use code below to generate
+# a background file and shap graphs
+# Currently we leave only the averaged shap graphs uncommented.
+
 # X_train.sample(10000, random_state=42)
 # .to_csv("shap_background.csv", index=False)
 
@@ -172,9 +174,9 @@ averaged_NN_shap_graphs_per_output(
     Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test,
     size_input, column_names, n_runs=1
 )
+
+
 # comparing to random guessing
-
-
 # Compute the random baseline per target
 def compute_majority_baseline(y, label: str = ""):
     counter = Counter(y)
