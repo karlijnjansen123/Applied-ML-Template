@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 from tabulate import tabulate
 from project_name.data import preprocessing
 from project_name.models.KNN import KNN_solver
@@ -122,7 +123,7 @@ print("F1 score for Sleep Difficulty:", f1_score_knn)
 # Build Neural Network
 (neural_network, X_train, X_test, scaler,
  val_acc1, val_acc2, val_acc3,
- metrics_dict) = build_neural_network(
+ metrics_dict, std_predictions) = build_neural_network(
     X_train, X_test,
     Y1_train, Y1_test,
     Y2_train, Y2_test,
@@ -146,6 +147,17 @@ print(
     f"Sleep Difficulty - Val Accuracy: {val_acc3:.3f}, "
     f"F1: {metrics_dict['sleep_difficulty']['f1_score']:.3f}, "
     f"AUC: {metrics_dict['sleep_difficulty']['auc_score']:.3f}"
+)
+
+print("\nUncertainty Estimates (MC Dropout, std):")
+print(
+    f"ThinkBody: mean std = {np.mean(std_predictions[0]):.4f}"
+)
+print(
+    f"FeelingLow: mean std = {np.mean(std_predictions[1]):.4f}"
+)
+print(
+    f"SleepDifficulty: mean std = {np.mean(std_predictions[2]):.4f}"
 )
 
 
@@ -216,3 +228,4 @@ comparison = {
 
 df_comparison = pd.DataFrame(comparison)
 print(tabulate(df_comparison, headers='keys', tablefmt='pretty'))
+
