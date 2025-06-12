@@ -170,10 +170,14 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
         )
 
     mc_predictions = list(zip(*mc_predictions))
-    mean_predictions = [np.mean(np.stack(p, axis=0),
-                        axis=0) for p in mc_predictions]
-    std_predictions = [np.std(np.stack(p, axis=0),
-                        axis=0) for p in mc_predictions]
+    mean_predictions = [
+        np.mean(np.stack(p, axis=0), axis=0)
+        for p in mc_predictions
+    ]
+    std_predictions = [
+        np.std(np.stack(p, axis=0), axis=0)
+        for p in mc_predictions
+    ]
 
     # Evaluate F1 and AUC on Test Data
     metrics_dict = {}

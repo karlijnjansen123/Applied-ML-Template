@@ -228,4 +228,3 @@ comparison = {
 
 df_comparison = pd.DataFrame(comparison)
 print(tabulate(df_comparison, headers='keys', tablefmt='pretty'))
-

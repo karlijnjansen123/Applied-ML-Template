@@ -10,9 +10,12 @@ from project_name.models.NeuralNetwork import test_train_split
 import shutil
 
 
-shutil.rmtree(os.path.join("grid_tuning", "multi_output_nn"), ignore_errors=True)
+shutil.rmtree(
+    os.path.join("grid_tuning", "multi_output_nn"),
+    ignore_errors=True
+)
 
-base_dir = os.path.dirname(os.path.dirname(__file__))  # Adjusted for relative structure
+base_dir = os.path.dirname(os.path.dirname(__file__))
 filepath = os.path.join(base_dir, "data", "HBSC2018.csv")
 
 X_base_columns = [
@@ -48,7 +51,12 @@ Y1 = pd.to_numeric(Y1, errors='raise')
 Y2 = pd.to_numeric(Y2, errors='raise')
 Y3 = pd.to_numeric(Y3, errors='raise')
 
-X_train, X_test, Y1_train, Y1_test, Y2_train, Y2_test, Y3_train, Y3_test = test_train_split(X, Y1, Y2, Y3)
+(
+    X_train, X_test,
+    Y1_train, Y1_test,
+    Y2_train, Y2_test,
+    Y3_train, Y3_test
+) = test_train_split(X, Y1, Y2, Y3)
 
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
@@ -72,13 +80,19 @@ def build_model(hp):
         x = tf.keras.layers.Dense(
             units=hp.Choice(f"units_{i}", [16, 32, 64]),
             activation='relu',
-            kernel_initializer='glorot_uniform'  # Explicit random init, aligns with NN.py
+            kernel_initializer='glorot_uniform'  # Explicit random init
         )(x)
 
     # Output layers
-    out1 = tf.keras.layers.Dense(5, activation='softmax', name='think_body')(x)
-    out2 = tf.keras.layers.Dense(5, activation='softmax', name='feeling_low')(x)
-    out3 = tf.keras.layers.Dense(5, activation='softmax', name='sleep_difficulty')(x)
+    out1 = tf.keras.layers.Dense(
+        5, activation='softmax', name='think_body'
+    )(x)
+    out2 = tf.keras.layers.Dense(
+        5, activation='softmax', name='feeling_low'
+    )(x)
+    out3 = tf.keras.layers.Dense(
+        5, activation='softmax', name='sleep_difficulty'
+    )(x)
 
     # Build model
     model = tf.keras.Model(inputs=inp, outputs=[out1, out2, out3])
@@ -108,7 +122,9 @@ def build_model(hp):
 # GridSearch Tuner from Keras
 tuner = kt.GridSearch(
     hypermodel=build_model,
-    objective=kt.Objective("val_think_body_sparse_categorical_accuracy", direction="max"),
+    objective=kt.Objective(
+        "val_think_body_sparse_categorical_accuracy", direction="max"
+    ),
     max_trials=None,  # Full grid
     executions_per_trial=1,
     directory="grid_tuning",
@@ -118,7 +134,11 @@ tuner = kt.GridSearch(
 # Run search
 tuner.search(
     X_train_scaled,
-    {"think_body": Y1_train - 1, "feeling_low": Y2_train - 1, "sleep_difficulty": Y3_train - 1},
+    {
+        "think_body": Y1_train - 1,
+        "feeling_low": Y2_train - 1,
+        "sleep_difficulty": Y3_train - 1,
+    },
     validation_split=0.2,
     epochs=2,
     batch_size=32,

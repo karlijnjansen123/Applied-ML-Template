@@ -10,8 +10,11 @@ from pydantic import BaseModel
 from typing import List
 import keras
 from focal_loss import SparseCategoricalFocalLoss
-from .prediction_postprocessing import make_predictions, post_processing, postprocessing_shap
-from .prediction_postprocessing import get_top3_shap_features_single, explainer, column_names
+from .prediction_postprocessing import (
+    make_predictions, post_processing,
+    postprocessing_shap, get_top3_shap_features_single,
+    explainer, column_names,
+)
 import numpy as np
 
 
@@ -48,7 +51,8 @@ class ModelInput(BaseModel):
     friendhelp: int
 
 
-# Predicts class labels for the 3 outcomes and returns top SHAP features per outcome
+# Predicts class labels for the 3 outcomes
+# and returns top SHAP features per outcome
 @app.post("/predict_with_shap")
 async def predict_with_shap(input_data: ModelInput):
     X_input = np.array([
@@ -80,33 +84,54 @@ async def predict_with_shap(input_data: ModelInput):
         index_class_sleep
     ) = post_processing(predictions)
 
-    top_features = get_top3_shap_features_single(explainer, X_input, column_names)
-    features_body, features_feelinlow, features_sleep = postprocessing_shap(top_features)
+    top_features = get_top3_shap_features_single(
+        explainer, X_input, column_names
+    )
+    (
+        features_body,
+        features_feelinlow,
+        features_sleep,
+    ) = postprocessing_shap(top_features)
+
     return {
         "predictions": {
             "Prediction for body image": prediction_thinkbody,
             "Prediction at feeling low": prediction_feelinglow,
             "Prediction at sleep difficulties": prediction_sleepdifficulties,
             "Top features attributing to body image prediction": features_body,
-            "Top features attributing to feelinglow prediction": features_feelinlow,
-            "Top features attributing to sleep prediction": features_sleep
-
-        }}
+            (
+                "Top features attributing to feeling low "
+                "prediction"
+            ): features_feelinlow,
+            "Top features attributing to sleep prediction": features_sleep,
+        }
+    }
 
 
 # Exception handlers
 @app.exception_handler(StarletteHTTPException)
-async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+async def custom_http_exception_handler(
+    request: Request,
+    exc: StarletteHTTPException
+):
     if exc.status_code == 404 and request.url.path == "/favicon.ico":
         return Response(status_code=204)
     return JSONResponse(
         status_code=exc.status_code,
-        content={"detail": f"Page '{request.url.path}' not found (HTTP {exc.status_code})"}
+        content={
+            "detail": (
+                f"Page '{request.url.path}' not found "
+                f"(HTTP {exc.status_code})"
+            )
+        }
     )
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+async def validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError
+):
     return JSONResponse(
         status_code=422,
         content={"detail": "Input data is invalid", "errors": exc.errors()}
@@ -114,10 +139,16 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 @app.exception_handler(Exception)
-async def general_exception_handler(request: Request, exc: Exception):
+async def general_exception_handler(
+    request: Request,
+    exc: Exception
+):
     return JSONResponse(
         status_code=500,
         content={
-            "detail": "An unexpected internal error occurred, please try again later."
+            "detail": (
+                "An unexpected internal error occurred, "
+                "please try again later."
+            )
         }
     )
