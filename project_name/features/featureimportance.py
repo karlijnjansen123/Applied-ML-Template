@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 
-def KNN_shap_graphs(X_train, X_test, predict_proba, y_name, num_explain=10, column_names=None):
+def KNN_shap_graphs(X_train, X_test, predict_proba, y_name, num_explain=10, column_names=None, plot=True):
     """
     Function that generates SHAP plots for a KNN classifier to explain feature contributions
 
@@ -45,12 +45,13 @@ def KNN_shap_graphs(X_train, X_test, predict_proba, y_name, num_explain=10, colu
     fig.set_size_inches(8, 6)
     plt.title(str(y_name))
     plt.tight_layout()
-    plt.show()
+    if plot:
+        plt.show()
 
     return shap_values
 
 
-def NN_shap_graphs(model, X_train, column_names):
+def NN_shap_graphs(model, X_train, column_names, sample_size=50000, no_explained=100, plot=True):
     """
     Function to compute and visualize SHAP values for a trained NN model
     using a sampled background dataset and visualizes the feature
@@ -65,7 +66,7 @@ def NN_shap_graphs(model, X_train, column_names):
     # 1. Train your model
     # 2. Create background dataset for SHAP
     np.random.seed(42)  # Set seed for reproducibility
-    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
+    background = X_train[np.random.choice(X_train.shape[0], sample_size, replace=False)]
 
     # 3. Define a wrapper function for multi-output model
     def model_predict(x):
@@ -81,11 +82,12 @@ def NN_shap_graphs(model, X_train, column_names):
 
     # 6. Plot
     # fig, axes = plt.subplots(1, 1, figsize=(12, 18))
-    shap.summary_plot(shap_values, X_train[:100], feature_names=column_names, show=False)
+    shap.summary_plot(shap_values, X_train[:no_explained], feature_names=column_names, show=False)
     plt.gca().legend_.remove()
 
     plt.tight_layout()
-    plt.show()
+    if plot:
+        plt.show()
 
 
 def averaged_NN_shap_graphs(
@@ -94,7 +96,10 @@ def averaged_NN_shap_graphs(
         Y1_train, Y1_test,
         Y2_train, Y2_test,
         Y3_train, Y3_test,
-        size_input, column_names, n_runs=5
+        size_input, column_names, n_runs=5,
+        sample_size=50000,
+        no_explained=1000,
+        plot = True
 ):
     """
     Function that trains the same neural network multiple times, computes
@@ -112,7 +117,7 @@ def averaged_NN_shap_graphs(
     """
 
     np.random.seed(42)  # For reproducibility of background selection
-    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
+    background = X_train[np.random.choice(X_train.shape[0], sample_size, replace=False)]
 
     all_shap_values = []
 
@@ -130,7 +135,7 @@ def averaged_NN_shap_graphs(
 
         # 3. Explain model using SHAP
         explainer = shap.Explainer(model_predict, background)
-        shap_values = explainer(X_train[:1000])  # Or a fixed sample
+        shap_values = explainer(X_train[:no_explained])  # Or a fixed sample
 
         all_shap_values.append(shap_values)
 
@@ -151,7 +156,8 @@ def averaged_NN_shap_graphs(
     shap.summary_plot(avg_shap, X_train[:100], feature_names=column_names, show=False)
     plt.gca().legend_.remove()
     plt.tight_layout()
-    plt.show()
+    if plot:
+        plt.show()
 
 
 def averaged_NN_shap_graphs_per_output(
@@ -161,6 +167,9 @@ def averaged_NN_shap_graphs_per_output(
         Y2_train, Y2_test,
         Y3_train, Y3_test,
         size_input, column_names, n_runs=5,
+        sample_size=50000,
+        no_explained=100,
+        plot=True
 ):
     """
     Same as averaged_NN_shap_graphs, but generates a separate SHAP summary plot
@@ -169,7 +178,7 @@ def averaged_NN_shap_graphs_per_output(
     """
 
     np.random.seed(42)  # For reproducibility of background selection
-    background = X_train[np.random.choice(X_train.shape[0], 50000, replace=False)]
+    background = X_train[np.random.choice(X_train.shape[0], sample_size, replace=False)]
 
     all_shap_values = []
 
@@ -193,7 +202,7 @@ def averaged_NN_shap_graphs_per_output(
 
         # Explain model using SHAP
         explainer = shap.Explainer(model_predict, background)
-        shap_values = explainer(X_train[:100])  # fixed sample size
+        shap_values = explainer(X_train[:no_explained])  # fixed sample size
 
         all_shap_values.append(shap_values)
 
@@ -212,9 +221,11 @@ def averaged_NN_shap_graphs_per_output(
         expl = shap.Explanation(
             values=values_avg[:, :, i],              # values for samples x features for output i
             base_values=base_values_avg[i],          # base value for output i
-            data=X_train[:100],
+            data=X_train[:no_explained],
             feature_names=column_names
         )
 
         # Plot SHAP summary plot per output
-        shap.summary_plot(expl, X_train[:100], feature_names=column_names, show=True)
+        shap.summary_plot(expl, X_train[:no_explained], feature_names=column_names, show=False)
+        if plot:
+            plt.show()
