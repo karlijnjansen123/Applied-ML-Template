@@ -122,7 +122,8 @@ def model_predict(x):
     x_tensor = tf.convert_to_tensor(x, dtype=tf.float32)
     preds = model(x_tensor, training=False)  # preds is a list of 3 arrays
     preds_np = [p.numpy() for p in preds]
-    combined = np.concatenate(preds_np, axis=1)  # shape: (batch_size, total_classes)
+    combined = np.concatenate(preds_np, axis=1)
+    # shape: (batch_size, total_classes)
 
     return combined
 
@@ -130,11 +131,25 @@ def model_predict(x):
 # Initialize SHAP PermutationExplainer
 explainer = shap.PermutationExplainer(model_predict, background)
 
-# Define column names (must match order of features in shap_background.csv and model input)
+# Define column names
+# (must match order of features in shap_background.csv and model input)
 column_names = [
-    "bodyweight", "bodyheight", "emcsocmed_sum", "nervous", "irritable", "lifesat", "breakfastwd",
-    "health", "fruits_2", "headache", "fight12m", "friendcounton", "softdrinks_2", "dizzy",
-    "sweets_2", "friendhelp"
+    "bodyweight",
+    "bodyheight",
+    "emcsocmed_sum",
+    "nervous",
+    "irritable",
+    "lifesat",
+    "breakfastwd",
+    "health",
+    "fruits_2",
+    "headache",
+    "fight12m",
+    "friendcounton",
+    "softdrinks_2",
+    "dizzy",
+    "sweets_2",
+    "friendhelp"
 ]
 
 
@@ -154,13 +169,17 @@ def get_top3_shap_features_single(explainer, X_sample, column_names):
         X_sample = X_sample[np.newaxis, :]
 
     shap_values = explainer(X_sample)
-    values = shap_values.values[0]  # For single sample, shape (total_classes, features)
+    values = shap_values.values[0]
+    # For single sample, shape (total_classes, features)
 
     num_classes_per_output = 5
     outputs = {
-        "Risk for body image": values[0:num_classes_per_output],
-        "Risk at feeling low": values[num_classes_per_output:2*num_classes_per_output],
-        "Risk at sleep difficulties": values[2*num_classes_per_output:3*num_classes_per_output],
+        "Risk for body image": values[
+            0:num_classes_per_output],
+        "Risk at feeling low": values[
+            num_classes_per_output:2*num_classes_per_output],
+        "Risk at sleep difficulties": values[
+            2*num_classes_per_output:3*num_classes_per_output],
     }
 
     top_features = {}
@@ -170,7 +189,8 @@ def get_top3_shap_features_single(explainer, X_sample, column_names):
         if len(shap_values.values.shape) == 3:
             idx = list(outputs.keys()).index(output_name)
             output_shap_values = shap_values.values[0][
-                num_classes_per_output * idx: num_classes_per_output * (idx + 1), :
+                num_classes_per_output * idx: num_classes_per_output * (
+                    idx + 1), :
             ]
             feature_importance = np.sum(np.abs(output_shap_values), axis=0)
         else:
@@ -178,7 +198,9 @@ def get_top3_shap_features_single(explainer, X_sample, column_names):
             feature_importance = np.abs(output_shap).sum(axis=0)
 
         top_idx = np.argsort(feature_importance)[::-1][:3]
-        top_feats = [(column_names[idx], float(feature_importance[idx])) for idx in top_idx]
+        top_feats = [(column_names[idx], float(
+            feature_importance[idx]
+            )) for idx in top_idx]
         top_features[output_name] = top_feats
 
     return top_features
@@ -195,7 +217,9 @@ def postprocessing_shap(top_features):
     topfeatures_feelinglow = top_features["Risk at feeling low"]
     topfeatures_sleep = top_features["Risk at sleep difficulties"]
     features_body = ",".join([feature[0] for feature in topfeatures_body])
-    features_feelinlow = ",".join([feature[0] for feature in topfeatures_feelinglow])
+    features_feelinlow = ",".join(
+        [feature[0] for feature in topfeatures_feelinglow]
+        )
     features_sleep = ",".join([feature[0] for feature in topfeatures_sleep])
 
     return features_body, features_feelinlow, features_sleep
