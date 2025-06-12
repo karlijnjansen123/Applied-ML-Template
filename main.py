@@ -1,9 +1,16 @@
 import os
+from distutils.command.build import build
+import pandas as pd
 from tabulate import tabulate
 from project_name.data import preprocessing
-from project_name.models.KNN import *
-from project_name.models.NeuralNetwork import *
-from project_name.features.featureimportance import *
+from project_name.models.KNN import KNN_solver
+from project_name.models.NeuralNetwork import (
+    build_neural_network,
+    test_train_split
+)
+from project_name.features.featureimportance import (
+    averaged_NN_shap_graphs_per_output
+)
 from collections import Counter
 
 # Check current working directory
@@ -55,69 +62,7 @@ y = ["thinkbody", "feellow", "sleepdificulty"]
 clean_data = preprocessing.preprocess_hbsc_data(
     filepath, all_columns_minus_socmed, emc_cols, y
 )
-print(clean_data.head())
 
-# input and output
-# initial selection
-# X = clean_data[["sex", "health", "timeexe",
-# "sweets_2", "beenbullied", "emcsocmed_sum"]]
-# corresponding column names
-# column_names = ["sex", "subj. health",
-# "vig. exercise", "eating sweets", "being bullied", "social media"]
-
-# all X
-# X = clean_data[["emcsocmed_sum",
-# "fasfamcar", "fasbedroom",
-# "fascomputers", "fasbathroom",
-# "fasdishwash", "fasholidays",
-# "health", "lifesat", "headache",
-# "stomachache", "backache",
-# "irritable", "nervous", "dizzy",
-# "physact60", "breakfastwd",
-# "breakfastwe", "fruits_2", "vegetables_2",
-# "sweets_2", "softdrinks_2",
-# "fmeal", "toothbr", "timeexe", "smokltm",
-# "smok30d_2", "alcltm",
-# "alc30d_2", "drunkltm", "drunk30d",
-# "cannabisltm_2", "cannabis30d_2",
-# "bodyweight", "bodyheight", "likeschool",
-# "schoolpressure", "studtogether",
-# "studhelpful", "studaccept", "teacheraccept",
-# "teachercare", "teachertrust",
-# "bulliedothers", "beenbullied", "cbulliedothers",
-# "cbeenbullied", "fight12m",
-# "injured12m", "friendhelp", "friendcounton",
-# "friendshare", "friendtalk",
-# "hadsex", "agesex", "contraceptcondom",
-# "contraceptpill", "motherhome1",
-# "fatherhome1", "stepmohome1", "stepfahome1",
-# "fosterhome1", "elsehome1_2",
-# "employfa", "employmo", "employnotfa",
-# "employnotmo", "talkfather", "talkmother",
-# "talkstepmo", "famhelp", "famsup", "famtalk",
-# "famdec", "MBMI", "IRFAS",
-# "IRRELFAS_LMH", "IOTF4", "oweight_who"]]
-
-# corresponding column names:
-# column_names = [
-#     "emcsocmed_sum", "fasfamcar", "fasbedroom", "fascomputers", "fasbathroom",
-#     "fasdishwash", "fasholidays", "health", "lifesat", "headache",
-#     "stomachache", "backache", "irritable", "nervous", "dizzy",
-#     "physact60", "breakfastwd", "breakfastwe", "fruits_2", "vegetables_2",
-#     "sweets_2", "softdrinks_2", "fmeal", "toothbr", "timeexe",
-#     "smokltm", "smok30d_2", "alcltm", "alc30d_2", "drunkltm",
-#     "drunk30d", "cannabisltm_2", "cannabis30d_2", "bodyweight", "bodyheight",
-#     "likeschool", "schoolpressure", "studtogether", "studhelpful", "studaccept",
-#     "teacheraccept", "teachercare", "teachertrust", "bulliedothers", "beenbullied",
-#     "cbulliedothers", "cbeenbullied", "fight12m", "injured12m", "friendhelp",
-#     "friendcounton", "friendshare", "friendtalk", "hadsex", "agesex",
-#     "contraceptcondom", "contraceptpill", "motherhome1", "fatherhome1",
-#     "stepmohome1", "stepfahome1", "fosterhome1",
-#     "elsehome1_2", "employfa", "employmo", "employnotfa",
-#     "employnotmo", "talkfather", "talkmother", "talkstepmo",
-#     "famhelp", "famsup", "famtalk", "famdec", "MBMI",
-#     "IRFAS", "IRRELFAS_LMH", "IOTF4", "oweight_who"
-# ]
 
 # most important X
 X = clean_data[["bodyweight", "bodyheight", "emcsocmed_sum",
@@ -132,45 +77,50 @@ column_names = ["bodyweight", "bodyheight", "emcsocmed_sum",
                 "friendcounton", "softdrinks_2", "dizzy",
                 "sweets_2", "friendhelp"]
 
+# Clean data for target labels
 Y1 = clean_data["thinkbody"]
 Y2 = clean_data["feellow"]
 Y3 = clean_data["sleepdificulty"]
 
+# Force to numeric
 Y1 = pd.to_numeric(Y1, errors='raise')
 Y2 = pd.to_numeric(Y2, errors='raise')
 Y3 = pd.to_numeric(Y3, errors='raise')
 
+# Size variable for input layer
 size_input = X.shape[1]
-print(size_input)
 
-print("X shape:", X.shape)
-print("X NaNs", X.isna().sum().sum())
-print("Y1 shape:", Y1.shape)
-print("Y1 NaNs:", Y1.isna().sum())
-print("preview of Y values", Y1.head)
 
-# run KNN model
-acc, X_tr, X_te, predict_proba = KNN_solver(X, Y1)
+# Run KNN model for Body Image
+acc, X_tr, X_te, predict_proba, f1_score_knn = KNN_solver(X, Y1)
 print("Accuracy for Body Image:", acc)
+print("F1 score for Body Image:", f1_score_knn)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Body Image", column_names=column_names)
 
-acc, X_tr, X_te, predict_proba = KNN_solver(X, Y2)
+
+# Run the KNN model for Feeling Low
+acc, X_tr, X_te, predict_proba, f1_score_knn = KNN_solver(X, Y2)
 print("Accuracy for Feeling Low:", acc)
+print("F1 score for Feeling Low:", f1_score_knn)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Feeling Low", column_names=column_names)
 
-acc, X_tr, X_te, predict_proba = KNN_solver(X, Y3)
+# Run the KNN model for Feeling Low
+acc, X_tr, X_te, predict_proba, f1_score_knn = KNN_solver(X, Y3)
 print("Accuracy for Sleep Difficulty:", acc)
+print("F1 score for Sleep Difficulty:", f1_score_knn)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Sleep Difficulty", column_names=column_names)
 
-# run the neural network
-# test-train split
+
+# Test-train split
 (X_train, X_test, Y1_train, Y1_test, Y2_train,
  Y2_test, Y3_train, Y3_test) = test_train_split(
     X, Y1, Y2, Y3
 )
+
+# Build Neural Network
 (neural_network, X_train, X_test, scaler,
  val_acc1, val_acc2, val_acc3,
  metrics_dict) = build_neural_network(
@@ -181,7 +131,6 @@ print("Accuracy for Sleep Difficulty:", acc)
     size_input
 )
 
-print(type(neural_network))
 
 print("\n=== Neural Network Validation Metrics ===")
 print(
@@ -200,6 +149,8 @@ print(
     f"AUC: {metrics_dict['sleep_difficulty']['auc_score']:.3f}"
 )
 
+
+# The following comments are for feature importance
 # X_train.sample(10000, random_state=42)
 # .to_csv("shap_background.csv", index=False)
 

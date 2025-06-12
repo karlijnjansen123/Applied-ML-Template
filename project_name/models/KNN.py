@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score
 
 def KNN_solver(X, y, scoring='accuracy', plot=True):
     """
@@ -62,7 +62,10 @@ def KNN_solver(X, y, scoring='accuracy', plot=True):
     y_pred = knn.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
 
+    # Get the f1_score to compare
+    f1_score_knn = f1_score(y_test, y_pred, average='macro')
+
     # Store probability prediction
     predict_proba = knn.predict_proba
 
-    return accuracy, X_train, X_test, predict_proba
+    return accuracy, X_train, X_test, predict_proba, f1_score_knn
