@@ -1,4 +1,5 @@
 import tensorflow as tf
+from sklearn.utils import class_weight
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from focal_loss import SparseCategoricalFocalLoss
@@ -45,12 +46,26 @@ def test_train_split(X, Y1, Y2, Y3):
             Y3_train, Y3_test)
 
 
+def compute_class_weights(y_train):
+    """
+    Function that calculates class weights for the output labels
+    :param y_train: train data for the y value (pandas)
+    :return: weight vector
+    """
+    classes = np.unique(y_train)
+    weights = class_weight.compute_class_weight(
+        class_weight='balanced',
+        classes=classes, y=y_train
+    )
+    return weights
+
+
 def build_neural_network(X_train, X_test, Y1_train, Y1_test,
                          Y2_train, Y2_test, Y3_train, Y3_test,
                          size_input):
     """
-    Function to build, compile, train, and evaluate a multi-output neural network
-    using Rank 1 hyperparameters and early stopping.
+    Function to build, compile, train, and evaluate a multi-output
+    neural network using Rank 1 hyperparameters and early stopping.
     """
     # Normalisation
     scaler = StandardScaler()
@@ -59,8 +74,15 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     # save the scalar
     joblib.dump(scaler, "./project_name/Deployment/scaler.pkl")
     # tensorboard
-    log_directory = os.path.join("logs", datetime.now().strftime("%Y%m%d-%H%M%S"))
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_directory, histogram_freq=1)
+    log_directory = os.path.join("logs", datetime.now().strftime(
+        "%Y%m%d-%H%M%S"))
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(
+        log_dir=log_directory, histogram_freq=1)
+
+    # Calculating class weights
+    y1_weights = compute_class_weights(Y1_train)
+    y2_weights = compute_class_weights(Y2_train)
+    y3_weights = compute_class_weights(Y3_train)
 
     # Model Architecture
     inp = tf.keras.Input(shape=(size_input,))
@@ -68,9 +90,15 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     hidden2 = tf.keras.layers.Dense(32, activation='relu')(hidden1)
     hidden3 = tf.keras.layers.Dense(64, activation='relu')(hidden2)
 
-    out1 = tf.keras.layers.Dense(5, activation='softmax', name='think_body')(hidden3)
-    out2 = tf.keras.layers.Dense(5, activation='softmax', name='feeling_low')(hidden3)
-    out3 = tf.keras.layers.Dense(5, activation='softmax', name='sleep_difficulty')(hidden3)
+    out1 = (tf.keras.layers.Dense(
+        5, activation='softmax', name='think_body'
+    )(hidden3))
+    out2 = tf.keras.layers.Dense(
+        5, activation='softmax', name='feeling_low'
+    )(hidden3)
+    out3 = tf.keras.layers.Dense(
+        5, activation='softmax', name='sleep_difficulty'
+    )(hidden3)
 
     model = tf.keras.Model(inputs=inp, outputs=[out1, out2, out3])
     optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
@@ -78,9 +106,21 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     model.compile(
         optimizer=optimizer,
         loss={
-            'think_body': SparseCategoricalFocalLoss(gamma=2),
-            'feeling_low': SparseCategoricalFocalLoss(gamma=2),
-            'sleep_difficulty': SparseCategoricalFocalLoss(gamma=2)
+            'think_body':
+                SparseCategoricalFocalLoss(
+                    gamma=1,
+                    class_weight=y1_weights
+                ),
+            'feeling_low':
+                SparseCategoricalFocalLoss(
+                    gamma=1,
+                    class_weight=y2_weights
+                ),
+            'sleep_difficulty':
+                SparseCategoricalFocalLoss(
+                    gamma=1,
+                    class_weight=y3_weights
+                )
         },
         metrics={
             'think_body': tf.keras.metrics.SparseCategoricalAccuracy(),
@@ -107,9 +147,12 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     )
 
     # Validation Metrics from History
-    val_accuracy_thinkbody = history.history['val_think_body_sparse_categorical_accuracy'][-1]
-    val_accuracy_feelinglow = history.history['val_feeling_low_sparse_categorical_accuracy'][-1]
-    val_accuracy_sleepdiff = history.history['val_sleep_difficulty_sparse_categorical_accuracy'][-1]
+    val_accuracy_thinkbody = history.history[
+         'val_think_body_sparse_categorical_accuracy'][-1]
+    val_accuracy_feelinglow = history.history[
+        'val_feeling_low_sparse_categorical_accuracy'][-1]
+    val_accuracy_sleepdiff = history.history[
+        'val_sleep_difficulty_sparse_categorical_accuracy'][-1]
 
     # Evaluate F1 and AUC on Test Data
     Y_preds = model.predict(X_test)
@@ -134,7 +177,7 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
                 average='macro'
             )
         except ValueError:
-            auc = np.nan  # handle rare cases when a class is missing in test set
+            auc = np.nan  # handle cases when a class is missing in test set
 
         metrics_dict[name] = {'f1_score': f1, 'auc_score': auc}
 
@@ -144,6 +187,8 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     # Return model, scaler, and all metrics
     return (
         model, X_train, X_test, scaler,
-        val_accuracy_thinkbody, val_accuracy_feelinglow, val_accuracy_sleepdiff,
+        val_accuracy_thinkbody, val_accuracy_feelinglow,
+        val_accuracy_sleepdiff,
+
         metrics_dict
     )
