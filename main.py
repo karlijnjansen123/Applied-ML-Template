@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 from tabulate import tabulate
 from project_name.data import preprocessing
 from project_name.models.KNN import KNN_solver
@@ -91,24 +92,40 @@ size_input = X.shape[1]
 
 
 # Run KNN model for Body Image
-acc, X_tr, X_te, predict_proba, f1_score_knn = KNN_solver(X, Y1)
-print("Accuracy for Body Image:", acc)
-print("F1 score for Body Image:", f1_score_knn)
+(
+    acc_bodyimage,
+    X_tr,
+    X_te,
+    redict_proba,
+    f1_score_knn_bodyimage
+ ) = KNN_solver(X, Y1)
+print("Accuracy for Body Image:", acc_bodyimage)
+print("F1 score for Body Image:", f1_score_knn_bodyimage)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Body Image", column_names=column_names)
 
 
 # Run the KNN model for Feeling Low
-acc, X_tr, X_te, predict_proba, f1_score_knn = KNN_solver(X, Y2)
-print("Accuracy for Feeling Low:", acc)
-print("F1 score for Feeling Low:", f1_score_knn)
+(
+    acc_feelinglow,
+    X_tr, X_te,
+    predict_proba,
+    f1_score_knn_feelinglow
+) = KNN_solver(X, Y2)
+print("Accuracy for Feeling Low:", acc_feelinglow)
+print("F1 score for Feeling Low:", f1_score_knn_feelinglow)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Feeling Low", column_names=column_names)
 
 # Run the KNN model for Feeling Low
-acc, X_tr, X_te, predict_proba, f1_score_knn = KNN_solver(X, Y3)
-print("Accuracy for Sleep Difficulty:", acc)
-print("F1 score for Sleep Difficulty:", f1_score_knn)
+(
+    acc_sleep,
+    X_tr, X_te,
+    predict_proba,
+    f1_score_knn_sleep
+) = KNN_solver(X, Y3)
+print("Accuracy for Sleep Difficulty:", acc_sleep)
+print("F1 score for Sleep Difficulty:", f1_score_knn_sleep)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Sleep Difficulty", column_names=column_names)
 
@@ -122,7 +139,7 @@ print("F1 score for Sleep Difficulty:", f1_score_knn)
 # Build Neural Network
 (neural_network, X_train, X_test, scaler,
  val_acc1, val_acc2, val_acc3,
- metrics_dict) = build_neural_network(
+ metrics_dict, std_predictions) = build_neural_network(
     X_train, X_test,
     Y1_train, Y1_test,
     Y2_train, Y2_test,
@@ -146,6 +163,17 @@ print(
     f"Sleep Difficulty - Val Accuracy: {val_acc3:.3f}, "
     f"F1: {metrics_dict['sleep_difficulty']['f1_score']:.3f}, "
     f"AUC: {metrics_dict['sleep_difficulty']['auc_score']:.3f}"
+)
+
+print("\nUncertainty Estimates (MC Dropout, std):")
+print(
+    f"ThinkBody: mean std = {np.mean(std_predictions[0]):.4f}"
+)
+print(
+    f"FeelingLow: mean std = {np.mean(std_predictions[1]):.4f}"
+)
+print(
+    f"SleepDifficulty: mean std = {np.mean(std_predictions[2]):.4f}"
 )
 
 

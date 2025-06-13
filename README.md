@@ -26,12 +26,22 @@ The data set that is used for training the mode is the HBSC (“Health Behavior 
 across the world, aged 11, 13, and 15 years old. It contains responses to a self-reported questionnaire.
 
 ## Deployment
+Below you'll find instructions on how to use the FastAPI implementation, and the streamlit application. 
+
 ### Requirements 
 # TODO explain venv creation + activation
-Before running the API, navigate the path to the root directory using the **'Folder Structure'** defined below, and 
-install the requirements via the terminal:
 
-`pip install  -r project_name/requirements.txt`
+This project uses venv and requirements.txt for managing the virtual environment and dependencies.<br>
+1) Create the virtual environment by running the following line from the root directory in the terminal:<br>
+`python -mv venv venv`<br>
+2) For windows: activate the virtual environment by running the following line from the root directory in the terminal:<br>
+`venv\Scripts\activate.bat`<br>
+   For macOS: activate the virutal environment by running the following line from the root directory in the terminal:<br>
+`source venv/bin/activate`<br>
+3) Install the dependencies from the root directory by running the following line in the terminal:<br>
+`pip install -r project_name/requirements.txt`<br>
+
+Before running the API or the streamlit application, navigate the path to the root directory using the **'Folder Structure'** defined below.
 
 ### Run the API
 To start the API, navigate to the root directory of the project and run in the terminal: 
@@ -42,7 +52,6 @@ This will start the FastAPI server at:
 
 `htttp://127.0.0.1:8000`
 
-# TODO: add streamlit demo startup instructions
 
 ### Send a request
 There are two ways to send a request to the API:
@@ -90,34 +99,80 @@ curl -X 'POST' \
     "Top features attributing to sleep prediction": "sweets_2,headache,fight12m"
   }
 }
+### Start streamlink
+Before running streamlink, make sure the API is running this can be done by following the instructions above.
+From the root directory run the following line in the terminal:
+`streamlit run project_name/Deployment/streamlit/start.py`
 
-### Folder Structure 
-# TODO: add some information about files
+This will open a web browser with the streamlit application, where you can fill in the questionnaire and push the predict button on the bottem of the page.
+
+### Folder Structure
 The path defined below depicts all the folders, but not all the files (which would be too crowded).
+Some information about important files can be found below.
 
 Applied-ML-Template/<br>
-├── Pipfile<br> 
+├── Pipfile<br>
 ├── Pipfile.lock<br>
 ├── README.md<br>
 ├── __init__.py<br>
 ├── __pycache__<br>
-│└── main.cpython-310.pyc<br> 
-├── main.py<br> 
-├── project_name<br> 
-│   ├── Deployment<br> 
+│   └── main.cpython-310.pyc<br>
+├── group_contribution.md<br>
+├── logs<br>
+├── main.py<br>
+├── original_79_features.txt<br>
+├── project_name<br>
+│   ├── Deployment<br>
 │   │  └──API.py<br>
-│   ├── __init__.py<br> 
-│   ├── __pycache__<br> 
-│   ├── data<br> 
-│   ├── features<br> 
-│   ├── models<br> 
-│   └── requirements<br> 
-└── tests<br> 
-    ├── __init__.py<br> 
-    ├── data<br> 
-    ├── features<br> 
-    ├── models<br> 
-    └── test_main.pyv
+│   │  └──streamlit<br>
+│   ├── __init__.py<br>
+│   ├── __pycache__<br>
+│   ├── data<br>
+│   ├── features<br>
+│   ├── models<br>
+│   └── requirements.txt<br>
+├── screenshots_API<br>
+├── shap_background.csv <br>
+└── tests<br>
+    ├── __init__.py<br>
+    ├── data<br>
+    ├── features<br>
+    ├── models<br>
+    └── test_main.py<br>
+**main.py**: The main file that runs all the necessary functions.<br>
+**logs**: Contains all the logs for tensorboard implementation.<br> 
+**original_79_features.txt**: Contains all original 79 features with corresponding column names. <br>
+**shap_background.csv**: Reference dataset to compute SHAP-values.<br>
+**project_name/data**:Folder containing several files for data:
+- HBSC2018.csv: The used data set. <br>
+- preprocessing.py: Functions for preprocessing.<br>
+
+**project_name/Deployment**: Contains several files:<br>
+- API.py: API implementation.
+- /streamlit:
+  - start.py: Main file for the streamlit implementation.<br>
+  - streamlit_postprocessing.py: Post processing for streamlit.<br>
+- prediction_postprocessing.py: Functions to get the top contributing x-features via SHAP, postprocessing for the API, prediction function for the API.<br>
+- neural_network_model.keras: The file containing the saved trained neural network.<br>
+- scaler.pkl: The file containing the saved scaler used for the neural network.<br>
+- troubleshoot.py: <br>
+
+
+**project_name/features**:Contains several files used for feature importance.<br>
+- feature_correlation.py: Function that displays a heatmap showing feature correlations.<br>
+- feature_importance.py: Contains functions for SHAP, feature importance. <br>
+
+**project_name/models**: Contains several files for the different models<br>
+- KNN.py contains our KNN implementation.<br>
+- NeuralNetwork.py contains the function building the neural network and helper functions.<br>
+- /grid_tuning: Contains trial runs for hyperparameter tuning test.<br>
+- /Plots manual tuning: Plots from manual tuning. <br>
+- hyperparameter_tuning.py: Functions for grid search.<br>
+- manual_tuning.py: Functions for manual tuning.<br>
+
+
+
+
 
 ## Features
 Our first approach was to select 5 features we thought would likely inform the outcomes, however we saw that this limited the accuracy of our model (+- 30%). Therefore, we proceeded to train the neural network on all available features (79) and keep only the most important ones. All features contain information about health and health behavior in physical, mental and social domains. 
@@ -253,8 +308,7 @@ Additionally, the comparison with the KNN baseline is also represented in the ta
 
 #### Limitations -> TODO update current
 There are some limitations that could affect the generalizability and performance of the model:
-- The model relies on self-reported questionnaire responses which could introduce biases. 
-- The target classes are imbalanced, and apart from using Focal loss no other methods were used to mitigate this. 
-- Due to the imbalanced classes and possible bias due to sel-reported questionnaire answers, the models accuracy is limited.
+- The model relies on self-reported questionnaire responses which could introduce biases.
+- Due to the imbalanced classes and possible bias due to sel-reported questionnaire answers, the models f1_score is limited.
 However as stated earlier, the primary significance and novelty of this tool lies in the personalized insight it provides into how certain 
 lifestyle choices may impact overall mental and physical health.

@@ -8,14 +8,14 @@ from project_name.data.preprocessing import preprocess_hbsc_data
 
 
 # Load data
-base_dir = os.path.dirname(os.path.dirname(_file_))
+base_dir = os.path.dirname(os.path.dirname(__file__))
 data_path = os.path.join(base_dir, "data", "HBSC2018.csv")
 
 # Get the input and output
 X_base_columns = [
-    "bodyweight", "bodyheight", "nervous", "irritable", "lifesat", "breakfastwd",
-    "health", "fruits_2", "headache", "fight12m", "friendcounton",
-    "softdrinks_2", "dizzy", "sweets_2", "friendhelp"
+    "bodyweight", "bodyheight", "nervous", "irritable", "lifesat",
+    "breakfastwd", "health", "fruits_2", "headache", "fight12m",
+    "friendcounton", "softdrinks_2", "dizzy", "sweets_2", "friendhelp"
 ]
 emc_cols = [f"emcsocmed{i}" for i in range(1, 10)]
 y_cols = ["thinkbody", "feellow", "sleepdificulty"]
@@ -33,7 +33,9 @@ X = data[X_columns]
 y = pd.to_numeric(data["thinkbody"], errors='raise')
 
 # Train/test split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
 # Scale
 scaler = StandardScaler()
@@ -42,7 +44,9 @@ X_test_scaled = scaler.transform(X_test)
 
 
 # Build neural network model
-def build_model_manual(learning_rate=0.001, units=64, num_layers=2, optimizer='adam'):
+def build_model_manual(
+    learning_rate=0.001, units=64, num_layers=2, optimizer='adam'
+):
     inputs = tf.keras.Input(shape=(X_train.shape[1],))
     x = inputs
     for _ in range(num_layers):
@@ -115,7 +119,7 @@ for param_name, values in varied_hyperparameters.items():
     plt.tight_layout()
 
     # Save plot to "Plots manual tuning" folder
-    plot_dir = os.path.join(os.path.dirname(_file_), "Plots manual tuning")
+    plot_dir = os.path.join(os.path.dirname(__file__), "Plots manual tuning")
     os.makedirs(plot_dir, exist_ok=True)
     plot_path = os.path.join(plot_dir, f"tuning_{param_name}.png")
     plt.savefig(plot_path)

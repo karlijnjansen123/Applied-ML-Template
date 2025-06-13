@@ -221,7 +221,7 @@ def averaged_NN_shap_graphs_per_output(
         # Train a fresh model using your build_model_fn()
         (
             model, X_train, X_test, scaler,
-            val_acc1, val_acc2, val_acc3, _
+            val_acc1, val_acc2, val_acc3, metrics_dict, std_predictions
         ) = build_model_fn(
             X_train, X_test,
             Y1_train, Y1_test,

@@ -87,8 +87,11 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     # Model Architecture
     inp = tf.keras.Input(shape=(size_input,))
     hidden1 = tf.keras.layers.Dense(32, activation='relu')(inp)
+    hidden1 = tf.keras.layers.Dropout(0.2)(hidden1)
     hidden2 = tf.keras.layers.Dense(32, activation='relu')(hidden1)
+    hidden2 = tf.keras.layers.Dropout(0.2)(hidden2)
     hidden3 = tf.keras.layers.Dense(64, activation='relu')(hidden2)
+    hidden3 = tf.keras.layers.Dropout(0.2)(hidden3)
 
     out1 = (tf.keras.layers.Dense(
         5, activation='softmax', name='think_body'
@@ -154,24 +157,53 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
     val_accuracy_sleepdiff = history.history[
         'val_sleep_difficulty_sparse_categorical_accuracy'][-1]
 
+    # Dropout predictions
+    n_samples = 20
+    mc_predictions = []
+
+    for _ in range(n_samples):
+        preds = model(
+            X_test, training=True
+        )
+        mc_predictions.append(
+            [p.numpy() for p in preds]
+        )
+
+    mc_predictions = list(zip(*mc_predictions))
+    mean_predictions = [
+        np.mean(np.stack(p, axis=0), axis=0)
+        for p in mc_predictions
+    ]
+    std_predictions = [
+        np.std(np.stack(p, axis=0), axis=0)
+        for p in mc_predictions
+    ]
+
     # Evaluate F1 and AUC on Test Data
-    Y_preds = model.predict(X_test)
     metrics_dict = {}
 
     for name, Y_true, Y_pred in zip(
-            ['think_body', 'feeling_low', 'sleep_difficulty'],
+            ['think_body', 'feeling_low',
+             'sleep_difficulty'],
             [Y1_test, Y2_test, Y3_test],
-            Y_preds):
+            mean_predictions):
 
-        Y_true_adjusted = Y_true - 1  # adjust to 0-indexed labels
+        Y_true_adjusted = Y_true - 1
         Y_pred_classes = np.argmax(Y_pred, axis=1)
 
         # F1 (macro)
-        f1 = f1_score(Y_true_adjusted, Y_pred_classes, average='macro')
+        f1 = f1_score(
+            Y_true_adjusted,
+            Y_pred_classes,
+            average='macro'
+        )
         # AUC (macro)
         try:
             auc = roc_auc_score(
-                tf.keras.utils.to_categorical(Y_true_adjusted, num_classes=5),
+                tf.keras.utils.to_categorical(
+                    Y_true_adjusted,
+                    num_classes=5
+                ),
                 Y_pred,
                 multi_class='ovr',
                 average='macro'
@@ -190,5 +222,6 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
         val_accuracy_thinkbody, val_accuracy_feelinglow,
         val_accuracy_sleepdiff,
 
-        metrics_dict
+        metrics_dict,
+        std_predictions
     )
