@@ -125,26 +125,36 @@ Applied-ML-Template/<br>
     ├── features<br>
     ├── models<br>
     └── test_main.py<br>
-**main.py**: The main file that runs all the necessary functions<br>
-**logs**: Contains all the logs for tensorboard implementation<br> 
-**original_79_features.txt**: Contains all original 79 features with corresponding column names <br>
+**main.py**: The main file that runs all the necessary functions.<br>
+**logs**: Contains all the logs for tensorboard implementation.<br> 
+**original_79_features.txt**: Contains all original 79 features with corresponding column names. <br>
+**shap_background.csv**: Reference dataset to compute SHAP-values.<br>
+**project_name/data**:Folder containing several files for data:
+- HBSC2018.csv: The used data set. <br>
+- preprocessing.py: Functions for preprocessing.<br>
+
 **project_name/Deployment**: Contains several files:<br>
-**shap_background.csv**: Reference dataset to compute SHAP-values<br>
-- API implementation
-- Streamlit implementation
-- prediction and the postprocessing for the API 
-- the saved trained neural network and scaler 
-- troubleshoot file<br>
+- API.py: API implementation.
+- /streamlit:
+  - start.py: Main file for the streamlit implementation.<br>
+  - streamlit_postprocessing.py: Post processing for streamlit.<br>
+- prediction_postprocessing.py: Functions to get the top contributing x-features via SHAP, postprocessing for the API, prediction function for the API.<br>
+- neural_network_model.keras: The file containing the saved trained neural network.<br>
+- scaler.pkl: The file containing the saved scaler used for the neural network.<br>
+- troubleshoot.py: <br>
 
 
-**features**:Contains several files used for feature importance<br>
-- Feature_correlation
-- Feature_importance<br>
+**project_name/features**:Contains several files used for feature importance.<br>
+- feature_correlation.py: Function that displays a heatmap showing feature correlations.<br>
+- feature_importance.py: Contains functions for SHAP, feature importance. <br>
 
-**models**: Contains several files for the different models<br>
-- KNN.py contains our KNN implementation
-- NeuralNetwork.py contains the function building the neural network and helper functions
-- manual_tuning.py and hyperparameter_tuning.py, grid_tuning and the plots manual tuning for the hyperparameter training<br>
+**project_name/models**: Contains several files for the different models<br>
+- KNN.py contains our KNN implementation.<br>
+- NeuralNetwork.py contains the function building the neural network and helper functions.<br>
+- /grid_tuning: Contains trial runs for hyperparameter tuning test.<br>
+- /Plots manual tuning: Plots from manual tuning. <br>
+- hyperparameter_tuning.py: Functions for grid search.<br>
+- manual_tuning.py: Functions for manual tuning.<br>
 
 
 
