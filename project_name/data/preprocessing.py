@@ -18,7 +18,7 @@ def preprocess_hbsc_data(filepath, selected_columns, emc_cols, y):
     data = pd.read_csv(filepath, sep=";", low_memory=False)
 
     # Data shape check
-    print(f"Original data shape: {data.shape}")
+    # print(f"Original data shape: {data.shape}")
 
     # Clean column names
     data.columns = data.columns.str.strip()

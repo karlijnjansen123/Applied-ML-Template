@@ -26,11 +26,22 @@ The data set that is used for training the mode is the HBSC (“Health Behavior 
 across the world, aged 11, 13, and 15 years old. It contains responses to a self-reported questionnaire.
 
 ## Deployment
-### Requirements 
-Before running the API, navigate the path to the root directory using the **'Folder Structure'** defined below, and 
-install the requirements via the terminal:
+Below you'll find instructions on how to use the FastAPI implementation, and the streamlit application. 
 
-`pip install  -r project_name/requirements`
+### Requirements 
+This project uses venv and requirements.txt for managing the virtual environment and dependencies.<br>
+It runs on Python 3.10.0.<br>
+1) Install Python 3.10.0
+2) Create the virtual environment by running the following line in the terminal, in the directory you want it to be:<br>
+`"<path to python 3.10's python.exe>" -m venv <name of your venv>`<br>
+2) For windows: activate the virtual environment by running the following line in the terminal:<br>
+`.<name of your venv>\Scripts\activate.bat`<br>
+   For macOS: activate the virutal environment by running the following line in the terminal:<br>
+`source <name of your venv>/bin/activate`<br>
+3) Install the dependencies from the root directory by running the following line in the terminal:<br>
+`pip install -r project_name/requirements.txt`<br>
+
+Before running the API or the streamlit application, navigate the path to the root directory using the **'Folder Structure'** defined below.
 
 ### Run the API
 To start the API, navigate to the root directory of the project and run in the terminal: 
@@ -39,14 +50,13 @@ To start the API, navigate to the root directory of the project and run in the t
 
 This will start the FastAPI server at: 
 
-`htttp://127.0.0.1:8000`
+`http://127.0.0.1:8000`
 
 ### Send a request
 There are two ways to send a request to the API:
 1. Use the URL defined above and put "/docs" behind the URL to view the automated documentation in the swagger UI.
 2. Send a curl request via the terminal
 
-At the moment there are two endpoints in our FastAPI, use the /predict_with_shap.
 Below there is an example or such a curl request and the corresponding response body of the API. Screenshots of the API
 call and API documentation can be found under the directory screenshots_API
 
@@ -88,37 +98,80 @@ curl -X 'POST' \
   }
 }
 
-### Folder Structure 
+### Run the Streamlit demo
+1) Make sure you started up the API with uvicorn
+2) In the terminal run: `python -m streamlit run project_name/Deployment/streamlit/start.py`
+3) Fill in some questionnaire answers and press `predict`.
 
-The path defined below depicts all the folders, but not all the files (which would be too crowded).
+### Folder Structure
+The path defined below depicts all the folders.
+Some information about important files can be found below.
 
 Applied-ML-Template/<br>
-├── Pipfile<br> 
-├── Pipfile.lock<br>
 ├── README.md<br>
 ├── __init__.py<br>
 ├── __pycache__<br>
-│└── main.cpython-310.pyc<br> 
-├── main.py<br> 
-├── project_name<br> 
-│   ├── Deployment<br> 
+│   └── main.cpython-310.pyc<br>
+├── group_contribution.md<br>
+├── logs<br>
+├── main.py<br>
+├── original_79_features.txt<br>
+├── project_name<br>
+│   ├── Deployment<br>
 │   │  └──API.py<br>
-│   ├── __init__.py<br> 
-│   ├── __pycache__<br> 
-│   ├── data<br> 
-│   ├── features<br> 
-│   ├── models<br> 
-│   └── requirements<br> 
-└── tests<br> 
-    ├── __init__.py<br> 
-    ├── data<br> 
-    ├── features<br> 
-    ├── models<br> 
-    └── test_main.pyv
+│   │  └──streamlit<br>
+│   ├── __init__.py<br>
+│   ├── __pycache__<br>
+│   ├── data<br>
+│   ├── features<br>
+│   ├── models<br>
+│   └── requirements.txt<br>
+├── screenshots_API<br>
+├── shap_background.csv <br>
+└── tests<br>
+    ├── __init__.py<br>
+    ├── data<br>
+    ├── features<br>
+    ├── models<br>
+    └── test_main.py<br>
+**main.py**: The main file that runs all the necessary functions.<br>
+**logs**: Contains all the logs for tensorboard implementation.<br> 
+**original_79_features.txt**: Contains all original 79 features with corresponding column names. <br>
+**shap_background.csv**: Reference dataset to compute SHAP-values.<br>
+**project_name/data**:Folder containing several files for data:
+- HBSC2018.csv: The used data set. <br>
+- preprocessing.py: Functions for preprocessing.<br>
+
+**project_name/Deployment**: Contains several files:<br>
+- API.py: API implementation.
+- /streamlit:
+  - start.py: Main file for the streamlit implementation.<br>
+  - streamlit_postprocessing.py: Post processing for streamlit.<br>
+- prediction_postprocessing.py: Functions to get the top contributing x-features via SHAP, postprocessing for the API, prediction function for the API.<br>
+- neural_network_model.keras: The file containing the saved trained neural network.<br>
+- scaler.pkl: The file containing the saved scaler used for the neural network.<br>
+- troubleshoot.py: <br>
+
+
+**project_name/features**:Contains several files used for feature importance.<br>
+- feature_correlation.py: Function that displays a heatmap showing feature correlations.<br>
+- feature_importance.py: Contains functions for SHAP, feature importance. <br>
+
+**project_name/models**: Contains several files for the different models<br>
+- KNN.py contains our KNN implementation.<br>
+- NeuralNetwork.py contains the function building the neural network and helper functions.<br>
+- /grid_tuning: Contains trial runs for hyperparameter tuning test.<br>
+- /Plots manual tuning: Plots from manual tuning. <br>
+- hyperparameter_tuning.py: Functions for grid search.<br>
+- manual_tuning.py: Functions for manual tuning.<br>
+
+
+
+
 
 ## Features
-Our first approach was to select 5 features we thought would likely inform the outcomes, however we saw that this limited the accuracy of our model (+- 30%). Therefore, we proceeded to train the neural network on all available features (79) and keep only the most important ones. All features contain information about health and health behavior in physical, mental and social domains. 
-The 15 most important features that inform the overall model are (in descending order):
+Our first approach was to select 5 features we thought would likely inform the outcomes, however we saw that this limited the accuracy of our model (+- 30%). Therefore, we proceeded to train the neural network on all available features (79) and keep only the most important ones. All features contain information about health and health behavior in physical, mental and social domains and can be reviewed in `original_79_features.txt`. 
+The 16 most important features that inform the overall model are (in descending order):
 1. bodyweight in kg. This was mainly important for predicting body image and feeling low.
 2. bodyheight in cm. For all three separate outcomes this was a top-3 feature. 
 3. emcsocmedsum = the sum of the scores on 9 questions about problematic social media use. 
@@ -210,7 +263,7 @@ are implemented using its predictions.
 
 #### Model architecture 
 The model is a neural network implemented with Keras. It consists of an input layer expecting sixteen input features, 
-followed by four hidden layers with 128,64,32,16 units, respectively, each using ReLu activation.
+followed by three hidden layers containing 32, 32, and 64 units, respectively, each using ReLu activation.
 The hidden layers are shared across tasks to enable multitask learning. 
 The network branches into three separate output layers, each using softmax activation to generate predictions.
 
@@ -220,7 +273,7 @@ The model generates predictions across the three separate domains.
 
 #### Training and evaluation
 The features and target data are split into a train and test set.
-The input data (*X_train* , *X_test*) is normalized using a *StandardScalar* to ensure consistent scaling across features. 
+The input data (*X_train* , *X_test*) is normalized using a *StandardScaler* to ensure consistent scaling across features. 
 The neural network  is trained using the *Adam optimizer*, and the *SparseCategoricalFocalLoss* as loss function. 
 Focal loss is used because it allows distinct class weights to each output, making it well suited for multitask learning 
 situation with unbalanced classes. These weights are however, not yet implemented. 
@@ -228,27 +281,30 @@ situation with unbalanced classes. These weights are however, not yet implemente
 assess performance per task
 
 #### Model Justification 
-The multitask learning neural network outperformed the three separate KNN-models, demonstrating the effectiveness 
+The multitask learning neural network outperformed the three separate KNN-models in F1 scores, demonstrating the effectiveness 
 of the shared representations across the three targets outputs. 
 To support this performance, we compared the model against a majority baseline to verify that it evaluates better than random guessing. 
-This baseline predicts the most frequent class for each target variable and is a more realistic benchmark than random guessing, especially in presence of class imbalance. 
+This baseline predicts the most frequent class for each target variable and is a more realistic benchmark than random guessing, 
+especially in presence of class imbalance. 
 For each of the tree targets(Body Image, Feeling Low, Sleep Difficulty), the majority class was identified and the proportion of samples in that class was used 
 as the baseline accuracy. 
 
 The model's validation accuracy on each target was then compared to the respective majority baseline (see table). 
 In all three cases, the validation accuracy exceeded the baseline, this shows that the model learned useful patterns and made better 
 predictions than just picking the most common class. This performance suggests that the model works well, even with imbalanced classes.
+Additionally, the comparison with the KNN baseline is also represented in the table below. 
 
-|   | Target           | Majority Baseline Accuracy | Validation Accuracy (Neural Network) | Above Baseline? |
-|---|------------------|----------------------------|--------------------------------------|-----------------|
-| 0 | Body Image       | 0.56                       | 0.589                                | True            |
-| 1 | Feeling Low      | 0.473                      | 0.543                                | True            |
-| 2 | Sleep Difficulty | 0.491                      | 0.543                                | True            |
+|   | Target           | Majority Baseline Accuracy | KNN Baseline Accuracy | Validation Accuracy (Neural Network) | Above Baseline? |
+|---|------------------|----------------------------|-----------------------|--------------------------------------|-----------------|
+| 0 | Body Image       | 0.56                       | 0.480                 | 0.377                                | False            |
+| 1 | Feeling Low      | 0.473                      | 0.458                 | 0.488                            | True            |
+| 2 | Sleep Difficulty | 0.491                      | 0.412                 | 0.377                                 | False            |
+
+Further on in the project we decided to pay special attention to the F1 score with regard to imbalanced classes, which does consistently reach a higher score in the final model compared to baseline.
 
 #### Limitations 
 There are some limitations that could affect the generalizability and performance of the model:
-- The model relies on self-reported questionnaire responses which could introduce biases. 
-- The target classes are imbalanced, and apart from using Focal loss no other methods were used to mitigate this. 
-- Due to the imbalanced classes and possible bias due to sel-reported questionnaire answers, the models accuracy is limited.
-However as stated earlier, the primary significance and novelty of this tool lies in the personalized insight it provides into how certain 
-lifestyle choices may impact overall mental and physical health.
+- The model relies on self-reported questionnaire responses which could introduce biases. The outcome is also self-reported.
+- The performance is perhaps too low to make for a highly useful tool. 
+However as stated earlier, the primary significance and novelty of this tool lies in the personalized insight it may provide into how certain 
+lifestyle choices can impact overall mental and physical health, and can be inspirational to the user despite not always being accurate.
