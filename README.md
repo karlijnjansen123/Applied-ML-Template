@@ -30,10 +30,18 @@ Below you'll find instructions on how to use the FastAPI implementation, and the
 
 ### Requirements 
 # TODO explain venv creation + activation
-Before running the API or the streamlit application, navigate the path to the root directory using the **'Folder Structure'** defined below, and 
-install the requirements via the terminal:
 
-`pip install  -r project_name/requirements.txt`
+This project uses venv and requirements.txt for managing the virtual environment and dependencies.<br>
+1) Create the virtual environment by running the following line from the root directory in the terminal:<br>
+`python -mv venv venv`<br>
+2) For windows: activate the virtual environment by running the following line from the root directory in the terminal:<br>
+`venv\Scripts\activate.bat`<br>
+   For macOS: activate the virutal environment by running the following line from the root directory in the terminal:<br>
+`source venv/bin/activate`<br>
+3) Install the dependencies from the root directory by running the following line in the terminal:<br>
+`pip install -r project_name/requirements.txt`<br>
+
+Before running the API or the streamlit application, navigate the path to the root directory using the **'Folder Structure'** defined below.
 
 ### Run the API
 To start the API, navigate to the root directory of the project and run in the terminal: 
@@ -44,7 +52,6 @@ This will start the FastAPI server at:
 
 `htttp://127.0.0.1:8000`
 
-# TODO: add streamlit demo startup instructions
 
 ### Send a request
 There are two ways to send a request to the API:
@@ -93,14 +100,13 @@ curl -X 'POST' \
   }
 }
 ### Start streamlink
-Before running streamlink, make sure the API is also running this can be done by following the instructions above.
+Before running streamlink, make sure the API is running this can be done by following the instructions above.
 From the root directory run the following line in the terminal:
 `streamlit run project_name/Deployment/streamlit/start.py`
 
-This will open a web browser with the streamlit application, where you can will in the questionnaire and push the predict button on the bottem of the page.
+This will open a web browser with the streamlit application, where you can fill in the questionnaire and push the predict button on the bottem of the page.
 
-### Folder Structure 
-# TODO: add some information about files
+### Folder Structure
 The path defined below depicts all the folders, but not all the files (which would be too crowded).
 Some information about important files can be found below.
 
@@ -302,8 +308,7 @@ Additionally, the comparison with the KNN baseline is also represented in the ta
 
 #### Limitations -> TODO update current
 There are some limitations that could affect the generalizability and performance of the model:
-- The model relies on self-reported questionnaire responses which could introduce biases. 
-- The target classes are imbalanced, and apart from using Focal loss no other methods were used to mitigate this. 
-- Due to the imbalanced classes and possible bias due to sel-reported questionnaire answers, the models accuracy is limited.
+- The model relies on self-reported questionnaire responses which could introduce biases.
+- Due to the imbalanced classes and possible bias due to sel-reported questionnaire answers, the models f1_score is limited.
 However as stated earlier, the primary significance and novelty of this tool lies in the personalized insight it provides into how certain 
 lifestyle choices may impact overall mental and physical health.
