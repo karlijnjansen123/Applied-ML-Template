@@ -97,10 +97,9 @@ size_input = X.shape[1]
     X_tr,
     X_te,
     redict_proba,
-    f1_score_knn_bodyimage
+    f1_score_knn_bodyimage,
+    auc_bodyimage
  ) = KNN_solver(X, Y1)
-print("Accuracy for Body Image:", acc_bodyimage)
-print("F1 score for Body Image:", f1_score_knn_bodyimage)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Body Image", column_names=column_names)
 
@@ -110,10 +109,9 @@ print("F1 score for Body Image:", f1_score_knn_bodyimage)
     acc_feelinglow,
     X_tr, X_te,
     predict_proba,
-    f1_score_knn_feelinglow
+    f1_score_knn_feelinglow,
+    auc_feelinglow
 ) = KNN_solver(X, Y2)
-print("Accuracy for Feeling Low:", acc_feelinglow)
-print("F1 score for Feeling Low:", f1_score_knn_feelinglow)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Feeling Low", column_names=column_names)
 
@@ -122,10 +120,9 @@ print("F1 score for Feeling Low:", f1_score_knn_feelinglow)
     acc_sleep,
     X_tr, X_te,
     predict_proba,
-    f1_score_knn_sleep
+    f1_score_knn_sleep,
+    auc_sleep
 ) = KNN_solver(X, Y3)
-print("Accuracy for Sleep Difficulty:", acc_sleep)
-print("F1 score for Sleep Difficulty:", f1_score_knn_sleep)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Sleep Difficulty", column_names=column_names)
 
@@ -147,34 +144,6 @@ print("F1 score for Sleep Difficulty:", f1_score_knn_sleep)
     size_input
 )
 
-
-print("\n=== Neural Network Validation Metrics ===")
-print(
-    f"Think Body - Val Accuracy: {val_acc1:.3f}, "
-    f"F1: {metrics_dict['think_body']['f1_score']:.3f}, "
-    f"AUC: {metrics_dict['think_body']['auc_score']:.3f}"
-)
-print(
-    f"Feeling Low - Val Accuracy: {val_acc2:.3f}, "
-    f"F1: {metrics_dict['feeling_low']['f1_score']:.3f}, "
-    f"AUC: {metrics_dict['feeling_low']['auc_score']:.3f}"
-)
-print(
-    f"Sleep Difficulty - Val Accuracy: {val_acc3:.3f}, "
-    f"F1: {metrics_dict['sleep_difficulty']['f1_score']:.3f}, "
-    f"AUC: {metrics_dict['sleep_difficulty']['auc_score']:.3f}"
-)
-
-print("\nUncertainty Estimates (MC Dropout, std):")
-print(
-    f"ThinkBody: mean std = {np.mean(std_predictions[0]):.4f}"
-)
-print(
-    f"FeelingLow: mean std = {np.mean(std_predictions[1]):.4f}"
-)
-print(
-    f"SleepDifficulty: mean std = {np.mean(std_predictions[2]):.4f}"
-)
 
 
 # To calculate feature importance, use code below to generate
@@ -204,14 +173,46 @@ averaged_NN_shap_graphs_per_output(
 )
 
 
-# comparing to random guessing
+
+# === Results of F1, Accuracy and AUC without MC Dropout ===
+
+comparison = {
+    "Target": ["Body Image",
+               "Feeling Low",
+               "Sleep Difficulty"],
+
+    "Accuracy (KNN)":
+        [0.48, 0.458, 0.412],
+    "Accuracy (Neural Network)":
+        [0.376, 0.475, 0.364],
+
+    "F1-score (KNN)":
+        [0.266, 0.353, 0.282],
+    "F1-score (Neural Network)":
+        [0.333, 0.424, 0.315],
+
+    "AUC (KNN)":
+        [0.583, 0.659, 0.59],
+    "AUC (Neural Network)":
+        [0.732, 0.76, 0.676]
+}
+
+df_comparison = pd.DataFrame(comparison)
+print(
+    "\n=== KNN vs Neural Network Model Performance (without MC Dropout) ==="
+)
+print(tabulate(
+    df_comparison,
+    headers='keys',
+    tablefmt='pretty')
+)
+
+
 # Compute the random baseline per target
 def compute_majority_baseline(y, label: str = ""):
     counter = Counter(y)
     most_common_class, count = counter.most_common(1)[0]
     baseline_accuracy = count / len(y)
-    print(f"Majority class for {label}: {most_common_class}")
-    print(f"Baseline accuracy for {label}: {baseline_accuracy:.3f}")
     return most_common_class, baseline_accuracy
 
 
@@ -223,24 +224,62 @@ randomguessing_feellinglow = (compute_majority_baseline
 randomguessing_sleepdifficulty = (compute_majority_baseline
                                   (Y3, label="Sleep Difficulty"))
 
+
+# Table with F1, Accuracy, AUC After applying MC dropout.
 comparison = {
-    "Target": ["Body Image", "Feeling Low", "Sleep Difficulty"],
+    "Target": ["Body Image",
+               "Feeling Low",
+               "Sleep Difficulty"],
+
     "Majority Baseline Accuracy": [
         round(randomguessing_bodyimage[1], 3),
         round(randomguessing_feellinglow[1], 3),
         round(randomguessing_sleepdifficulty[1], 3)
     ],
+    "Validation Accuracy (KNN)": [
+        round(acc_bodyimage, 3),
+        round(acc_feelinglow, 3),
+        round(acc_sleep, 3)
+    ],
     "Validation Accuracy (Neural Network)": [
         round(val_acc1, 3),
         round(val_acc2, 3),
-        round(val_acc2, 3)
+        round(val_acc3, 3)
     ],
-    "Above Baseline?": [
-        val_acc1 > randomguessing_bodyimage[1],
-        val_acc2 > randomguessing_feellinglow[1],
-        val_acc3 > randomguessing_sleepdifficulty[1]
-    ]
+    "F1-score (KNN)": [
+        round(f1_score_knn_bodyimage, 3),
+        round(f1_score_knn_feelinglow, 3),
+        round(f1_score_knn_sleep, 3)
+    ],
+    "F1-score (Neural Network)": [
+        round(metrics_dict['think_body']
+              ['f1_score'], 3),
+        round(metrics_dict['feeling_low']
+              ['f1_score'], 3),
+        round(metrics_dict['sleep_difficulty']
+              ['f1_score'], 3)
+    ],
+    "AUC (KNN)": [
+        round(auc_bodyimage, 3),
+        round(auc_feelinglow, 3),
+        round(auc_sleep, 3)
+    ],
+    "AUC (Neural Network)": [
+        round(metrics_dict['think_body']
+              ['auc_score'], 3),
+        round(metrics_dict['feeling_low']
+              ['auc_score'], 3),
+        round(metrics_dict['sleep_difficulty']
+              ['auc_score'], 3)
+    ],
+    "Uncertainty with MC dropout (Neural Network)": [
+        float(f"{np.mean(std_predictions[0]):.3f}"),
+        float(f"{np.mean(std_predictions[1]):.3f}"),
+        float(f"{np.mean(std_predictions[2]):.3f}")
+    ],
 }
 
+
 df_comparison = pd.DataFrame(comparison)
+print("\n=== KNN vs Neural Network Model Performance (with MC Dropout) ===")
 print(tabulate(df_comparison, headers='keys', tablefmt='pretty'))
