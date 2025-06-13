@@ -92,24 +92,24 @@ size_input = X.shape[1]
 
 
 # Run KNN model for Body Image
-acc, X_tr, X_te, predict_proba, f1_score_knn = KNN_solver(X, Y1)
-print("Accuracy for Body Image:", acc)
-print("F1 score for Body Image:", f1_score_knn)
+acc_bodyimage, X_tr, X_te, predict_proba, f1_score_knn_bodyimage = KNN_solver(X, Y1)
+print("Accuracy for Body Image:", acc_bodyimage)
+print("F1 score for Body Image:", f1_score_knn_bodyimage)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Body Image", column_names=column_names)
 
 
 # Run the KNN model for Feeling Low
-acc, X_tr, X_te, predict_proba, f1_score_knn = KNN_solver(X, Y2)
-print("Accuracy for Feeling Low:", acc)
-print("F1 score for Feeling Low:", f1_score_knn)
+acc_feelinglow, X_tr, X_te, predict_proba, f1_score_knn_feelinglow = KNN_solver(X, Y2)
+print("Accuracy for Feeling Low:", acc_feelinglow)
+print("F1 score for Feeling Low:", f1_score_knn_feelinglow)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Feeling Low", column_names=column_names)
 
 # Run the KNN model for Feeling Low
-acc, X_tr, X_te, predict_proba, f1_score_knn = KNN_solver(X, Y3)
-print("Accuracy for Sleep Difficulty:", acc)
-print("F1 score for Sleep Difficulty:", f1_score_knn)
+acc_sleep, X_tr, X_te, predict_proba, f1_score_knn_sleep = KNN_solver(X, Y3)
+print("Accuracy for Sleep Difficulty:", acc_sleep)
+print("F1 score for Sleep Difficulty:", f1_score_knn_sleep)
 # KNN_shap_graphs(X_tr, X_te, predict_proba,
 # "Sleep Difficulty", column_names=column_names)
 

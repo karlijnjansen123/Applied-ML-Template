@@ -26,9 +26,11 @@ The data set that is used for training the mode is the HBSC (“Health Behavior 
 across the world, aged 11, 13, and 15 years old. It contains responses to a self-reported questionnaire.
 
 ## Deployment
+Below you'll find instructions on how to use the FastAPI implementation, and the streamlit application. 
+
 ### Requirements 
 # TODO explain venv creation + activation
-Before running the API, navigate the path to the root directory using the **'Folder Structure'** defined below, and 
+Before running the API or the streamlit application, navigate the path to the root directory using the **'Folder Structure'** defined below, and 
 install the requirements via the terminal:
 
 `pip install  -r project_name/requirements.txt`
@@ -90,6 +92,12 @@ curl -X 'POST' \
     "Top features attributing to sleep prediction": "sweets_2,headache,fight12m"
   }
 }
+### Start streamlink
+Before running streamlink, make sure the API is also running this can be done by following the instructions above.
+From the root directory run the following line in the terminal:
+`streamlit run project_name/Deployment/streamlit/start.py`
+
+This will open a web browser with the streamlit application, where you can will in the questionnaire and push the predict button on the bottem of the page.
 
 ### Folder Structure 
 # TODO: add some information about files
