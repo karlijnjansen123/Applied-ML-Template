@@ -94,30 +94,61 @@ curl -X 'POST' \
 ### Folder Structure 
 # TODO: add some information about files
 The path defined below depicts all the folders, but not all the files (which would be too crowded).
+Some information about important files can be found below.
 
 Applied-ML-Template/<br>
-├── Pipfile<br> 
+├── Pipfile<br>
 ├── Pipfile.lock<br>
 ├── README.md<br>
 ├── __init__.py<br>
 ├── __pycache__<br>
-│└── main.cpython-310.pyc<br> 
-├── main.py<br> 
-├── project_name<br> 
-│   ├── Deployment<br> 
+│   └── main.cpython-310.pyc<br>
+├── group_contribution.md<br>
+├── logs<br>
+├── main.py<br>
+├── original_79_features.txt<br>
+├── project_name<br>
+│   ├── Deployment<br>
 │   │  └──API.py<br>
-│   ├── __init__.py<br> 
-│   ├── __pycache__<br> 
-│   ├── data<br> 
-│   ├── features<br> 
-│   ├── models<br> 
-│   └── requirements<br> 
-└── tests<br> 
-    ├── __init__.py<br> 
-    ├── data<br> 
-    ├── features<br> 
-    ├── models<br> 
-    └── test_main.pyv
+│   │  └──streamlit<br>
+│   ├── __init__.py<br>
+│   ├── __pycache__<br>
+│   ├── data<br>
+│   ├── features<br>
+│   ├── models<br>
+│   └── requirements.txt<br>
+├── screenshots_API<br>
+├── shap_background.csv <br>
+└── tests<br>
+    ├── __init__.py<br>
+    ├── data<br>
+    ├── features<br>
+    ├── models<br>
+    └── test_main.py<br>
+**main.py**: The main file that runs all the necessary functions<br>
+**logs**: Contains all the logs for tensorboard implementation<br> 
+**original_79_features.txt**: Contains all original 79 features with corresponding column names <br>
+**project_name/Deployment**: Contains several files:<br>
+**shap_background.csv**: Reference dataset to compute SHAP-values<br>
+- API implementation
+- Streamlit implementation
+- prediction and the postprocessing for the API 
+- the saved trained neural network and scaler 
+- troubleshoot file<br>
+
+
+**features**:Contains several files used for feature importance<br>
+- Feature_correlation
+- Feature_importance<br>
+
+**models**: Contains several files for the different models<br>
+- KNN.py contains our KNN implementation
+- NeuralNetwork.py contains the function building the neural network and helper functions
+- manual_tuning.py and hyperparameter_tuning.py, grid_tuning and the plots manual tuning for the hyperparameter training<br>
+
+
+
+
 
 ## Features
 Our first approach was to select 5 features we thought would likely inform the outcomes, however we saw that this limited the accuracy of our model (+- 30%). Therefore, we proceeded to train the neural network on all available features (79) and keep only the most important ones. All features contain information about health and health behavior in physical, mental and social domains. 
