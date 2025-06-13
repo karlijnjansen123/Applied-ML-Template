@@ -124,14 +124,14 @@ Q3 = int(numerical_value)
 
 st.write("Select how often in the last 6 months you were feeling nervous:")
 q4_frequency = st.select_slider("Nervous",
-    options=[
-        "about every day",
-        "more than once day",
-        "about every week",
-        "about every month",
-        "rarely or never"
-    ]
-)
+                                options=[
+                                    "about every day",
+                                    "more than once day",
+                                    "about every week",
+                                    "about every month",
+                                    "rarely or never"
+                                    ]
+                                )
 if q4_frequency == "about every day":
     q4 = 1
 if q4_frequency == "more than once day":
@@ -200,7 +200,8 @@ if q6_frequency == "10: the best possible life for me":
     q6 = 10
 Q6 = int(q6)
 
-st.write("From Monday - Friday, how many days do you have breakfast (more than a glass of milk or juice)?")
+st.write("From Monday - Friday, how many days do you"
+         "have breakfast (more than a glass of milk or juice)?")
 q7_frequency = int(
     st.slider(
         "Breakfast weekdays",
@@ -281,7 +282,8 @@ if q10_frequency == "rarely or never":
     q10 = 5
 Q10 = int(q10)
 
-st.write("During the past 12 months, how many times were you in a physical fight?")
+st.write("During the past 12 months, how many"
+         "times were you in a physical fight?")
 q11_frequency = st.select_slider(
     "Physical fight",
     options=[
@@ -304,7 +306,8 @@ if q11_frequency == "4 times or more":
     q11 = 5
 Q11 = int(q11)
 
-st.write("How much do you agree with the statement: 'I can count on my friends when things go wrong'?")
+st.write("How much do you agree with the statement:"
+         "'I can count on my friends when things go wrong'?")
 
 q12_value = st.select_slider(
     "Count on friends",
@@ -409,10 +412,12 @@ if q15_value == "More than once a day":
     q15 = 7
 Q15 = int(q15)
 
-st.write("How much do you agree with the statement: 'My friends really try to help me'?")
+st.write(
+    "How much do you agree with the statement: "
+    "'My friends really try to help me'?"
+)
 q16_value = st.select_slider(
-    "Help from friends"
-    ,
+    "Help from friends",
     options=[
         "1: Very strongly disagree",
         "2",
@@ -492,9 +497,9 @@ if st.button("Predict"):
     )
     # Sleep difficulties
     st.subheader(
-        f"Your prediction on how often you're experiencing sleep difficulties: "
-        f"{sleepdiff_label}"
-    )
+        f"Your prediction on how often you're experiencing "
+        f"sleep difficulties: {sleepdiff_label}"
+        )
     st.text("The top 3 most contributing factors for this prediction are:")
     st.text(
         f"1. {output_sleep[0]}\n"

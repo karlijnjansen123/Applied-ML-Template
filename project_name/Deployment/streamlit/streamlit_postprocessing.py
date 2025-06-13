@@ -70,7 +70,7 @@ def output_model_streamlit(text):
         "Top features attributing to body image prediction"
     ]
     features_feelinglow = predictions_dict[
-        "Top features attributing to feelinglow prediction"
+        "Top features attributing to feeling low prediction"
     ]
     features_sleepdiff = predictions_dict[
         "Top features attributing to sleep prediction"
