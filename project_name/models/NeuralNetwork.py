@@ -78,11 +78,8 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
 
     # Calculating class weights
     y1_weights = compute_class_weights(Y1_train)
-    print(y1_weights, 'Weights for Body Image')
     y2_weights = compute_class_weights(Y2_train)
-    print(y2_weights, 'Weights for Feeling Low')
     y3_weights = compute_class_weights(Y3_train)
-    print(y3_weights, 'Weights for Sleep difficulties')
 
     # Model Architecture
     inp = tf.keras.Input(shape=(size_input,))
@@ -163,7 +160,7 @@ def build_neural_network(X_train, X_test, Y1_train, Y1_test,
 
     for _ in range(n_samples):
         preds = model(
-            X_test, training=True
+            X_test, training=True # set this to False to run without MC dropout
         )
         mc_predictions.append(
             [p.numpy() for p in preds]
