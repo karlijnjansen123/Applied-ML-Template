@@ -1,5 +1,5 @@
 """
-Run streamlit application by this command:
+Run streamlit application by this command and make sure API is already running:
 python -m streamlit run project_name/Deployment/streamlit/start.py"
 """
 import streamlit as st
@@ -122,8 +122,8 @@ else:
     numerical_value += 1
 Q3 = int(numerical_value)
 
-q4_frequency = st.select_slider(
-    "Select how often in the last 6 months you were feeling nervous:",
+st.write("Select how often in the last 6 months you were feeling nervous:")
+q4_frequency = st.select_slider("Nervous",
     options=[
         "about every day",
         "more than once day",
@@ -144,8 +144,9 @@ if q4_frequency == "rarely or never":
     q4 = 5
 Q4 = int(q4)
 
+st.write("Select how often in the last 6 months you were feeling irritable:")
 q5_frequency = st.select_slider(
-    "Select how often in the last 6 months you were feeling irritable:",
+    "Irritable",
     options=[
         "about every day",
         "more than once day",
@@ -166,8 +167,9 @@ if q5_frequency == "rarely or never":
     q5 = 5
 Q5 = int(q5)
 
+st.write("Select where you feel like you are on this scale (in general)")
 q6_frequency = st.select_slider(
-    "Select where you feel like you are on this scale (in general)",
+    "Life satisfaction",
     options=[
         "0: the worst possible life for me",
         "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -198,17 +200,18 @@ if q6_frequency == "10: the best possible life for me":
     q6 = 10
 Q6 = int(q6)
 
+st.write("From Monday - Friday, how many days do you have breakfast (more than a glass of milk or juice)?")
 q7_frequency = int(
     st.slider(
-        "From Monday - Friday, how many days do you have breakfast "
-        "(more than a glass of milk or juice)?",
+        "Breakfast weekdays",
         0, 5, 1
     )
 )
 Q7 = int(q7_frequency + 1)
 
+st.write("In general, would you say your health is...")
 q8_value = st.select_slider(
-    "In general, would you say your health is...",
+    "Health",
     options=[
         "Excellent",
         "Good",
@@ -226,8 +229,9 @@ if q8_value == "Poor":
     q8 = 4
 Q8 = int(q8)
 
+st.write("How often a week do you eat fruits?")
 q9_value = st.select_slider(
-    "How often a week do you eat fruits?",
+    "Fruits",
     options=[
         "Never",
         "Less than once a week",
@@ -254,8 +258,9 @@ if q9_value == "More than once a day":
     q9 = 7
 Q9 = int(q9)
 
+st.write("Select how often in the last 6 months you had a headache:")
 q10_frequency = st.select_slider(
-    "Select how often in the last 6 months you had a headache:",
+    "Headache",
     options=[
         "about every day",
         "more than once day",
@@ -276,8 +281,9 @@ if q10_frequency == "rarely or never":
     q10 = 5
 Q10 = int(q10)
 
+st.write("During the past 12 months, how many times were you in a physical fight?")
 q11_frequency = st.select_slider(
-    "During the past 12 months, how many times were you in a physical fight?",
+    "Physical fight",
     options=[
         "Never",
         "One time",
@@ -298,11 +304,10 @@ if q11_frequency == "4 times or more":
     q11 = 5
 Q11 = int(q11)
 
+st.write("How much do you agree with the statement: 'I can count on my friends when things go wrong'?")
+
 q12_value = st.select_slider(
-    (
-        "How much do you agree with the statement: "
-        "'I can count on my friends when things go wrong'?"
-    ),
+    "Count on friends",
     options=[
         "1: Very strongly disagree",
         "2",
@@ -329,8 +334,9 @@ if q12_value == "7: Very strongly agree":
     q12 = 7
 Q12 = int(q12)
 
+st.write("How many times a week do you usually drink coke or soft drinks?")
 q13_frequency = st.select_slider(
-    "How many times a week do you usually drink coke or soft drinks?",
+    "Coke + soft drinks",
     options=[
         "Every day",
         "Most days",
@@ -351,8 +357,9 @@ if q13_frequency == "Never":
     q13 = 5
 Q13 = int(q13)
 
+st.write("Select how often in the last 6 months you felt dizzy:")
 q14_frequency = st.select_slider(
-    "Select how often in the last 6 months you felt dizzy:",
+    "Dizzy",
     options=[
         "about every day",
         "more than once day",
@@ -373,8 +380,9 @@ if q14_frequency == "rarely or never":
     q14 = 5
 Q14 = int(q14)
 
+st.write("How often a week do you eat sweets or chocolate?")
 q15_value = st.select_slider(
-    "How often a week do you eat sweets or chocolate?",
+    "Sweets + chocolate",
     options=[
         "Never",
         "Less than once a week",
@@ -401,11 +409,10 @@ if q15_value == "More than once a day":
     q15 = 7
 Q15 = int(q15)
 
+st.write("How much do you agree with the statement: 'My friends really try to help me'?")
 q16_value = st.select_slider(
-    (
-        "How much do you agree with the statement: "
-        "'My friends really try to help me'?"
-    ),
+    "Help from friends"
+    ,
     options=[
         "1: Very strongly disagree",
         "2",
@@ -466,31 +473,31 @@ if st.button("Predict"):
         f"Your prediction on what you think of you body image: "
         f"{bodyimage_label}"
     )
-    st.text("The factors  contributing to this prediction are:")
+    st.text("The top 3 most contributing factors for this prediction are:")
     st.text(
-        f"1.{output_body[0]}\n"
-        f" 2.{output_body[1]},\n"
-        f" 3.{output_body[2]}"
+        f"1. {output_body[0]}\n"
+        f" 2. {output_body[1]},\n"
+        f" 3. {output_body[2]}"
     )
     # Feeling low
     st.subheader(
         f"Your prediction on how often you're feeling low: "
         f"{feelinglow_label}"
     )
-    st.text("The factors  contributing to this prediction are:")
+    st.text("The top 3 most contributing factors for this prediction are:")
     st.text(
-        f"1.{output_feelow[0]}\n"
-        f" 2.{output_feelow[1]},\n"
-        f" 3.{output_feelow[2]}"
+        f"1. {output_feelow[0]}\n"
+        f" 2. {output_feelow[1]},\n"
+        f" 3. {output_feelow[2]}"
     )
     # Sleep difficulties
     st.subheader(
-        f"Your prediction on how often you're experiencing sleep difficulties:"
+        f"Your prediction on how often you're experiencing sleep difficulties: "
         f"{sleepdiff_label}"
     )
-    st.text("The factors contributing to this prediction are:")
+    st.text("The top 3 most contributing factors for this prediction are:")
     st.text(
-        f"1.{output_sleep[0]}\n"
-        f" 2.{output_sleep[1]},\n"
-        f" 3.{output_sleep[2]}"
+        f"1. {output_sleep[0]}\n"
+        f" 2. {output_sleep[1]},\n"
+        f" 3. {output_sleep[2]}"
     )
