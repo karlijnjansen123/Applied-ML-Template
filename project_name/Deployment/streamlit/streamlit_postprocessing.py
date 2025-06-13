@@ -82,21 +82,17 @@ def output_model_streamlit(text):
     label_sleepdiff = predictions_dict["Prediction at sleep difficulties"]
 
     # Return variables to print in the streamlit application
-    body_image = (
-        f"Your prediction on what you think of you body image: "
-        f"{label_bodyimage}, the lifestyle choices contributing to this "
-        f"prediction: {features_bodyimage}."
-    )
-    feelinglow = (
-        f"Your prediction on how often you're feeling low: "
-        f"{label_feelinglow}, the lifestyle choices contributing to this "
-        f"prediction: {features_feelinglow}."
-    )
-    sleepdiff = (
-        f"Your prediction on how often you're experiencing "
-        f"sleep difficulties: {label_sleepdiff}, the lifestyle choices "
-        f"contributing to this prediction: {features_sleepdiff}."
-    )
+    "Your prediction on what you think of you body image: "
+    f"{label_bodyimage}, the lifestyle choices contributing to this "
+    f"prediction: {features_bodyimage}."
+
+    "Your prediction on how often you're feeling low: "
+    f"{label_feelinglow}, the lifestyle choices contributing to this "
+    f"prediction: {features_feelinglow}."
+
+    "Your prediction on how often you're experiencing "
+    f"sleep difficulties: {label_sleepdiff}, the lifestyle choices "
+    f"contributing to this prediction: {features_sleepdiff}."
 
     return (
         label_bodyimage, label_feelinglow,
